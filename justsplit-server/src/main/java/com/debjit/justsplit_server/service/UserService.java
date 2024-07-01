@@ -26,6 +26,14 @@ public class UserService {
         }
     }
 
+    public Optional<UserDTO> getUserByEmail(String email) throws Exception {
+        try {
+            return userRepo.findOneByEmail(email);
+        } catch (Exception e) {
+            throw new Exception("Failed to find user.");
+        }
+    }
+
     public UserDTO createUser(UserDTO userDTO) throws Exception {
         try {
             userDTO.setCreatedAt(new Date(System.currentTimeMillis()));

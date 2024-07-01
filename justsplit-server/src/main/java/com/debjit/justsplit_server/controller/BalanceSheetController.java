@@ -10,18 +10,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.debjit.justsplit_server.model.BalanceSheetDTO;
 import com.debjit.justsplit_server.service.BalanceSheetService;
 
 @RestController
+@RequestMapping(path = "/api")
 @CrossOrigin(origins = "*")
 public class BalanceSheetController {
     @Autowired
     private BalanceSheetService balanceSheetService;
 
-    @GetMapping("/api/balancesheet/{id}")
+    @GetMapping("/balancesheet/{id}")
     public ResponseEntity<?> getBalanceSheetId(@PathVariable(name = "id") String id) {
         try {
             Optional<BalanceSheetDTO> balanceSheetDTO = balanceSheetService.getBalanceSheetById(id);

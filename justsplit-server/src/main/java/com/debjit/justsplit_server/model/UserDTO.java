@@ -24,4 +24,5 @@ public class UserDTO {
     private String balanceSheetId;
     private Date createdAt;
     private Date updatedAt;
+    private String authToken;
 }

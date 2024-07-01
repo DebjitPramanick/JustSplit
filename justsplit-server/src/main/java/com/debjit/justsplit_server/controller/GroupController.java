@@ -14,14 +14,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping(path = "/api")
 @CrossOrigin(origins = "*")
 public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @GetMapping("/api/group/{id}")
+    @GetMapping("/group/{id}")
     public ResponseEntity<?> getGroupById(@PathVariable String id) {
         try {
             Optional<GroupDTO> groupDTO = groupService.getGroupById(id);
@@ -34,7 +36,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/api/group")
+    @PostMapping("/group")
     public ResponseEntity<?> cerateGroup(@RequestBody GroupDTO groupDTO) {
         try {
             groupDTO = groupService.createGroup(groupDTO, "");

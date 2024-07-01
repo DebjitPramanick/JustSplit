@@ -1,5 +1,6 @@
 package com.debjit.justsplit_server.controller;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,31 +9,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.debjit.justsplit_server.model.UserDTO;
 import com.debjit.justsplit_server.service.UserService;
 
 @RestController
+@RequestMapping(path = "/api")
 @CrossOrigin(origins = "*")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/api/users/{groupId}")
-    public ResponseEntity<?> getUserByGroupId(@PathVariable(name = "groupId") String groupId) {
-        // Query query = new Query(Criteria.where("groupId").in());
-        // Optional<UserDTO> user = userRepo.findOne();
-
-        // if (user != null) {
-        // return new ResponseEntity<>(user, HttpStatus.OK);
-        // }
-        return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/users/{id}/")
     public ResponseEntity<?> getUserById(@PathVariable(name = "id") String id) {
         try {
             Optional<UserDTO> user = userService.getUserById(id);
@@ -46,14 +36,23 @@ public class UserController {
         }
     }
 
-    @PostMapping("/api/users")
-    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
+    @GetMapping("/users/")
+    public ResponseEntity<?> getAllUsers() {
         try {
-            userDTO = userService.createUser(userDTO);
-            return new ResponseEntity<UserDTO>(userDTO, HttpStatus.OK);
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
         }
     }
 
+    @GetMapping("/users/{groupId}")
+    public ResponseEntity<?> getUserByGroupId(@PathVariable(name = "groupId") String groupId) {
+        // Query query = new Query(Criteria.where("groupId").in());
+        // Optional<UserDTO> user = userRepo.findOne();
+
+        // if (user != null) {
+        // return new ResponseEntity<>(user, HttpStatus.OK);
+        // }
+        return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
+    }
 }
