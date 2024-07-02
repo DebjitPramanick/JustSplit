@@ -1,8 +1,6 @@
 package com.debjit.justsplit_server.controller;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +20,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users/{id}/")
+    @GetMapping("/user/{id}")
     public ResponseEntity<?> getUserById(@PathVariable(name = "id") String id) {
         try {
-            Optional<UserDTO> user = userService.getUserById(id);
+            UserDTO user = userService.getUserById(id);
 
             if (user != null) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
@@ -36,23 +34,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/")
-    public ResponseEntity<?> getAllUsers() {
+    @GetMapping("/user/group/{groupId}")
+    public ResponseEntity<?> getUserByGroupId(@PathVariable(name = "groupId") String groupId) {
         try {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+            List<UserDTO> users = userService.getUsersByGroupId(groupId);
+            return new ResponseEntity<>(users, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
         }
-    }
-
-    @GetMapping("/users/{groupId}")
-    public ResponseEntity<?> getUserByGroupId(@PathVariable(name = "groupId") String groupId) {
-        // Query query = new Query(Criteria.where("groupId").in());
-        // Optional<UserDTO> user = userRepo.findOne();
-
-        // if (user != null) {
-        // return new ResponseEntity<>(user, HttpStatus.OK);
-        // }
-        return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
     }
 }

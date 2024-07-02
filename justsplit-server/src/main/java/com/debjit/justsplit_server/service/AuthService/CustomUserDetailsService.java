@@ -21,9 +21,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         try {
-            Optional<UserDTO> userDTO = userService.getUserByEmail(email);
-            String userEmail = userDTO.get().getEmail();
-            String password = userDTO.get().getPassword();
+            UserDTO userDTO = userService.getUserByEmail(email);
+            String userEmail = userDTO.getEmail();
+            String password = userDTO.getPassword();
             return new User(userEmail, password, new ArrayList<>());
         } catch (Exception e) {
             throw new UsernameNotFoundException("User not found: " + e.toString());

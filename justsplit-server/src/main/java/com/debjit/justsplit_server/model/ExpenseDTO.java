@@ -1,5 +1,6 @@
 package com.debjit.justsplit_server.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,10 +23,10 @@ public class ExpenseDTO {
     private String description;
     private Double amount;
     private String paidBy;
-    private String participant;
+    private List<String> participants = new ArrayList<>();
     private String groupId;
     private SplitType splitType;
-    private List<Split> splits;
+    private List<Split> splits = new ArrayList<>();
     private Date createdAt;
     private Date updatedAt;
 }

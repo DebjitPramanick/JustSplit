@@ -1,6 +1,7 @@
 package com.debjit.justsplit_server.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,25 @@ public class UserService {
     @Autowired
     private BalanceSheetService balanceSheetService;
 
-    public Optional<UserDTO> getUserById(String id) throws Exception {
+    public UserDTO getUserById(String id) throws Exception {
         try {
-            return userRepo.findById(id);
+            return userRepo.findById(id).get();
         } catch (Exception e) {
             throw new Exception("Failed to find user.");
         }
     }
 
-    public Optional<UserDTO> getUserByEmail(String email) throws Exception {
+    public UserDTO getUserByEmail(String email) throws Exception {
         try {
-            return userRepo.findOneByEmail(email);
+            return userRepo.findOneByEmail(email).get();
+        } catch (Exception e) {
+            throw new Exception("Failed to find user.");
+        }
+    }
+
+    public List<UserDTO> getUsersByGroupId(String groupId) throws Exception {
+        try {
+            return userRepo.findByGroupIdsContaining(groupId);
         } catch (Exception e) {
             throw new Exception("Failed to find user.");
         }
@@ -43,6 +52,15 @@ public class UserService {
             balanceSheetDTO = balanceSheetService.createBalanceSheet(balanceSheetDTO);
             userDTO.setBalanceSheetId(balanceSheetDTO.getId());
             userRepo.save(userDTO);
+            return userDTO;
+        } catch (Exception e) {
+            throw new Exception("Failed to create user.");
+        }
+    }
+
+    public UserDTO updateUser(UserDTO userDTO) throws Exception {
+        try {
+            userDTO = userRepo.save(userDTO);
             return userDTO;
         } catch (Exception e) {
             throw new Exception("Failed to create user.");

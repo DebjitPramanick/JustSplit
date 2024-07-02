@@ -1,5 +1,6 @@
 package com.debjit.justsplit_server.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class UserDTO {
     private String name;
     private String email;
     private String password;
-    private List<String> groupIds;
+    private List<String> groupIds = new ArrayList<>();
     private String balanceSheetId;
     private Date createdAt;
     private Date updatedAt;
