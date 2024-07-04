@@ -1,7 +1,5 @@
 package com.debjit.justsplit_server.controller;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +8,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,13 +64,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody AuthRequestDTO authRequestDTO) { // TODO: Change
+    public ResponseEntity<?> loginUser(@RequestBody AuthRequestDTO authRequestDTO) {
         try {
             authenticateUser(authRequestDTO.getEmail(), authRequestDTO.getPassword());
             UserDetails userDetails = userDetailsService.loadUserByUsername(authRequestDTO.getEmail());
             String token = jwtUtils.generateToken(userDetails.getUsername());
-            Optional<UserDTO> userDTO = userService.getUserByEmail(authRequestDTO.getEmail());
-            AuthResponseDTO response = new AuthResponseDTO(token, userDTO.get());
+            UserDTO userDTO = userService.getUserByEmail(authRequestDTO.getEmail());
+            AuthResponseDTO response = new AuthResponseDTO(token, userDTO);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
