@@ -29,20 +29,20 @@ export interface BoxProps
     PositionProps,
     SpaceProps,
     GridProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const Box = styled.div.withConfig({
   shouldForwardProp,
 })<BoxProps>`
-  ${layout}
-  ${flexbox}
-    ${position}
-    ${space}
-    ${color}
-    ${background}
-    ${border}
-    ${grid}
+  ${layout};
+  ${flexbox};
+  ${position};
+  ${space};
+  ${color};
+  ${background};
+  ${border};
+  ${grid};
 `;
 
 export default Box;

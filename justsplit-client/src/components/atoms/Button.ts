@@ -34,6 +34,7 @@ export interface ButtonProps
 const Button = styled.button.withConfig({
   shouldForwardProp,
 })<ButtonProps>`
+  display: block;
   height: 32px;
   padding: 0 16px;
   font-size: 16px;
