@@ -29,8 +29,8 @@ const Input = styled.input.withConfig({
 })<InputProps>`
   display: block;
   width: 100%;
-  height: 40px;
-  padding: 0 8px;
+  height: 48px;
+  padding: 0 16px;
   font-size: 16px;
   border-radius: 4px;
   border: 1px solid ${colors.BORDER_NEUTRAL_WEAK};

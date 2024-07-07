@@ -19,7 +19,7 @@ import {
   GridProps,
 } from "styled-system";
 
-export interface ButtonProps
+export interface UnstyledButtonProps
   extends BackgroundProps,
     BorderProps,
     ColorProps,
@@ -28,19 +28,13 @@ export interface ButtonProps
     PositionProps,
     SpaceProps,
     GridProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-const Button = styled.button.withConfig({
+const UnstyledButton = styled.button.withConfig({
   shouldForwardProp,
-})<ButtonProps>`
+})<UnstyledButtonProps>`
   display: block;
-  height: 32px;
-  padding: 0 16px;
-  font-size: 16px;
-  text-align: center;
-  border-radius: 4px;
-  border: 1px solid grey;
   cursor: pointer;
   ${flexbox};
   ${position};
@@ -51,4 +45,4 @@ const Button = styled.button.withConfig({
   ${grid}
 `;
 
-export default Button;
+export default UnstyledButton;

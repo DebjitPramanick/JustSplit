@@ -4,16 +4,38 @@ import {
   AuthForm,
   AuthFormContainer,
   FormTitle,
+  HeaderBranding,
   InputLabel,
   LeftSection,
   RightSection,
+  RightSideText,
+  RightSideVector,
   TextLink,
 } from "../index.styled";
-import React from "react";
+import React, { useEffect } from "react";
 import { useImmer } from "use-immer";
 import useUserApi from "~/api/userApi";
+import colors from "~/styles/colors";
 
 type FieldType = "name" | "email" | "password";
+
+const RIGHT_SIDE_CONTENT_NODES = [
+  <RightSideText key="right-side-content-1">
+    Split Wisely,
+    <br />
+    Stay Friendly
+  </RightSideText>,
+  <RightSideText key="right-side-content-2">
+    Fair Shares,
+    <br />
+    Happy Hearts
+  </RightSideText>,
+  <RightSideText key="right-side-content-3">
+    Together Again,
+    <br />
+    Bill-Free
+  </RightSideText>,
+];
 
 const SignUpPage = () => {
   const { signupUser } = useUserApi();
@@ -22,6 +44,7 @@ const SignUpPage = () => {
     email: "",
     password: "",
     confirmedPassword: "",
+    currentRightSideNodeIdx: 0,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,9 +59,29 @@ const SignUpPage = () => {
     e.preventDefault();
   };
 
+  useEffect(() => {
+    // Function to update the current index
+    const updateIndex = () => {
+      setPageState((draft) => {
+        draft.currentRightSideNodeIdx =
+          (draft.currentRightSideNodeIdx + 1) % RIGHT_SIDE_CONTENT_NODES.length;
+      });
+    };
+
+    // Set up the interval
+    const intervalId = setInterval(updateIndex, 3000); // 10000 milliseconds = 10 seconds
+
+    // Clear the interval on component unmount
+    return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <AuthPageContainer>
       <LeftSection>
+        <HeaderBranding>
+          Just<span style={{ color: colors.TEXT_ACCENT_NORMAL }}>Split</span>
+        </HeaderBranding>
         <AuthFormContainer>
           <FormTitle>Sign Up</FormTitle>
           <AuthForm mt="32px" onSubmit={handleFormSubmit}>
@@ -86,14 +129,22 @@ const SignUpPage = () => {
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt="32px">
               <TextLink href="/login">Already an user? Log In</TextLink>
-              <Button type="submit" ml="16px">
-                Signup
-              </Button>
+              <Button
+                text="Signup"
+                type="submit"
+                ml="16px"
+                onClick={() => {}}
+              />
             </Flex>
           </AuthForm>
         </AuthFormContainer>
       </LeftSection>
-      <RightSection></RightSection>
+      <RightSection>
+        <RightSideVector />
+        <Box mb="90px">
+          {RIGHT_SIDE_CONTENT_NODES[pageState.currentRightSideNodeIdx]}
+        </Box>
+      </RightSection>
     </AuthPageContainer>
   );
 };

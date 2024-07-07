@@ -1,21 +1,12 @@
-import { css, keyframes } from 'styled-components';
+import { css, keyframes } from "styled-components";
 
-const zoomKf = (from = 0.8, to = 1) => keyframes`
-from  {
-  transform: scale(${from});
-}
-to {
-  transform: scale(${to});
-}
-`;
-
-const fadeKf = (from, to) => keyframes`
-from  {
-  opacity: ${from}
-}
-to {
-  opacity: ${to}
-}
+const fadeKf = (from: number, to: number) => keyframes`
+  from  {
+    opacity: ${from}
+  }
+  to {
+    opacity: ${to}
+  }
 `;
 
 const slideInTopKf = keyframes`
@@ -27,26 +18,25 @@ const slideInTopKf = keyframes`
   }
 `;
 
-const slideInBottomKf = keyframes`
+const slideUpKf = (initialY: string, finalY: string) => keyframes`
   from {
-    transform: translateY(10px);
+    transform: translateY(${initialY});
+    opacity: 0;
   }
   to {
-    transform: translateY(0px);
+    transform: translateY(${finalY});
+    opacity: 1;
   }
 `;
 
-const typingWaveKf = keyframes`
-  0% {
-    transform: translateY(0px);
-
+const slideDownKf = (initialY: string, finalY: string) => keyframes`
+  from {
+    transform: translateY(${initialY});
+    opacity: 1;
   }
-  30% {
-    transform: translateY(-5px);
-
-  }
-  50% {
-    transform: translateY(0px);
+  to {
+    transform: translateY(${finalY});
+    opacity: 0;
   }
 `;
 
@@ -59,67 +49,55 @@ const spinKf = keyframes`
   }
 `;
 
-const rippleKf = keyframes`
+const rippleKf = (maxSize: number) => keyframes`
   from {
     opacity: 1;
     transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: scale(2);
+    transform: scale(${maxSize});
   }
 `;
 
-const rotate360Kf = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
-
-export const fadeIn = (ms = 200, timerFn = 'ease-in-out') => css`
+export const fadeIn = (ms = 200, timerFn = "ease-in-out") => css`
   animation: ${fadeKf(0, 1)} ${ms}ms ${timerFn};
 `;
 
-export const fadeOut = (ms = 200, timerFn = 'ease-in-out') => css`
+export const fadeOut = (ms = 200, timerFn = "ease-in-out") => css`
   animation: ${fadeKf(1, 0)} ${ms}ms ${timerFn};
 `;
 
-export const slideInTop = (ms = 200, timerFn = 'ease-in-out') => css`
+export const slideInTop = (ms = 200, timerFn = "ease-in-out") => css`
   animation: ${slideInTopKf} ${ms}ms ${timerFn};
 `;
 
-export const slideInBottom = (ms = 200, timerFn = 'ease-in-out') => css`
-  animation: ${slideInBottomKf} ${ms}ms ${timerFn};
+export const slideUp = (
+  ms = 200,
+  initialY = "10px",
+  finalY = "0px",
+  timerFn = "ease-in-out"
+) => css`
+  animation: ${slideUpKf(initialY, finalY)} ${ms}ms ${timerFn};
 `;
 
-export const typingWave = (ms = 1800, timerFn = 'ease-in-out') => css`
-  animation: ${typingWaveKf} ${ms}ms infinite ${timerFn};
-  &:nth-child(1) {
-    animation-delay: 200ms;
-  }
-  &:nth-child(2) {
-    animation-delay: 300ms;
-  }
-  &:nth-child(3) {
-    animation-delay: 400ms;
-  }
+export const slideDown = (
+  ms = 200,
+  initialY = "0px",
+  finalY = "10px",
+  timerFn = "ease-in-out"
+) => css`
+  animation: ${slideDownKf(initialY, finalY)} ${ms}ms ${timerFn};
 `;
 
-export const zoomIn = (ms = 200, timerFn = 'ease-in-out') => css`
-  animation: ${zoomKf(0.8, 1)} ${ms}ms ${timerFn};
-`;
-
-export const spin = (ms = 200, timerFn = 'ease-in-out', iterations = 'infinite') => css`
+export const spin = (
+  ms = 200,
+  timerFn = "ease-in-out",
+  iterations = "infinite"
+) => css`
   animation: ${spinKf} ${ms}ms ${timerFn} ${iterations};
 `;
 
-export const ripple = (ms = 1500, timerFn = 'ease-in-out') => css`
-  animation: ${rippleKf} ${ms}ms infinite ${timerFn};
-`;
-
-export const rotate360 = (ms = 1500, timerFn = 'ease-in-out') => css`
-  animation: ${rotate360Kf} ${ms}ms infinite ${timerFn};
+export const ripple = (ms = 1500, timerFn = "ease-in-out", maxSize = 2) => css`
+  animation: ${rippleKf(maxSize)} ${ms}ms infinite ${timerFn};
 `;
