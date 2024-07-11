@@ -18,7 +18,7 @@ import com.debjit.justsplit_server.service.BalanceSheetService;
 
 @RestController
 @RequestMapping(path = "/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081/", allowCredentials = "true")
 public class BalanceSheetController {
     @Autowired
     private BalanceSheetService balanceSheetService;

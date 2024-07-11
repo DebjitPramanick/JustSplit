@@ -14,10 +14,11 @@ import {
 } from "../index.styled";
 import React, { useEffect } from "react";
 import { useImmer } from "use-immer";
-import useUserApi from "~/api/userApi";
+import useUserApi from "~/api/user";
 import colors from "~/styles/colors";
+import { useNavigate } from "react-router-dom";
 
-type FieldType = "name" | "email" | "password";
+type FieldType = "name" | "email" | "password" | "confirmedPassword";
 
 const RIGHT_SIDE_CONTENT_NODES = [
   <RightSideText key="right-side-content-1">
@@ -39,6 +40,7 @@ const RIGHT_SIDE_CONTENT_NODES = [
 
 const SignUpPage = () => {
   const { signupUser } = useUserApi();
+  const navigate = useNavigate();
   const [pageState, setPageState] = useImmer({
     name: "",
     email: "",
@@ -57,6 +59,21 @@ const SignUpPage = () => {
 
   const handleFormSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const payload = {
+      name: pageState.name,
+      email: pageState.email,
+      password: pageState.password,
+    };
+    signupUser.mutate(
+      {
+        payload,
+      },
+      {
+        onSuccess: () => {
+          navigate("/");
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -128,7 +145,7 @@ const SignUpPage = () => {
               />
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt="32px">
-              <TextLink href="/login">Already an user? Log In</TextLink>
+              <TextLink to="/login">Already an user? Log In</TextLink>
               <Button
                 text="Signup"
                 type="submit"

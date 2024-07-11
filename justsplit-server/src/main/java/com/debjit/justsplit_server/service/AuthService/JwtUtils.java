@@ -14,6 +14,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
@@ -26,13 +27,17 @@ public class JwtUtils {
     @Value("${spring.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        logger.debug("Authorization Header: {}", bearerToken);
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // Remove Bearer prefix
+    public String getJwtFromCookies(HttpServletRequest request) {
+        String jwt = "";
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals("auth_token")) {
+                    jwt = cookie.getValue();
+                }
+            }
         }
-        return "";
+        logger.debug("JWT: {}", jwt);
+        return jwt;
     }
 
     public String generateToken(String userEmail) {

@@ -4,6 +4,7 @@ import colors from "~/styles/colors";
 
 export const Root = styled(UnstyledButton)<{
   fontSize: number;
+  outlined?: boolean;
 }>`
   height: ${({ height }) => `${height}px`};
   width: auto;
@@ -11,11 +12,17 @@ export const Root = styled(UnstyledButton)<{
   text-align: center;
   font-size: ${({ fontSize }) => `${fontSize}px`};
   color: ${colors.TEXT_INVERTED};
-  background-color: ${colors.BG_ACCENT_NORMAL};
+  color: ${({ outlined }) =>
+    outlined ? colors.TEXT_ACCENT_NORMAL : colors.TEXT_INVERTED};
+  background-color: ${({ outlined }) =>
+    outlined ? colors.BG_SURFACE : colors.BG_ACCENT_NORMAL};
   border-radius: 4px;
   border: 1px solid ${colors.BORDER_ACCENT_STRONG};
+  white-space: nowrap;
 
   &:hover {
     background-color: ${colors.BG_ACCENT_WEAK};
+    color: ${({ outlined }) =>
+      outlined ? colors.TEXT_INVERTED : colors.TEXT_ACCENT_NORMAL};
   }
 `;

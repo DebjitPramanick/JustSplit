@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping(path = "/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081/", allowCredentials = "true")
 public class GroupController {
     @Autowired
     private GroupService groupService;

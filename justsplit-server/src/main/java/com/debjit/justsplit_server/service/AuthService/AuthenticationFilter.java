@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -52,6 +51,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
                 // Setting the authentication token in security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // Setting user's email in the request object
+                request.setAttribute("user_email", email);
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e.getMessage());
@@ -65,7 +67,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
-        String jwt = jwtUtils.getJwtFromHeader(request);
+        String jwt = jwtUtils.getJwtFromCookies(request);
         logger.debug("AuthenticationFilter.java: {}", jwt);
         return jwt;
     }

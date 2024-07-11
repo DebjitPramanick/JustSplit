@@ -1,7 +1,9 @@
 package com.debjit.justsplit_server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.debjit.justsplit_server.model.UserDTO;
 import com.debjit.justsplit_server.model.Auth.AuthRequestDTO;
-import com.debjit.justsplit_server.model.Auth.AuthResponseDTO;
 import com.debjit.justsplit_server.service.UserService;
 import com.debjit.justsplit_server.service.AuthService.CustomUserDetailsService;
 import com.debjit.justsplit_server.service.AuthService.JwtUtils;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping(path = "/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081/", allowCredentials = "true")
 public class AuthController {
 
     @Autowired
@@ -55,8 +56,10 @@ public class AuthController {
             userDTO.setAuthToken(token);
 
             userDTO = userService.createUser(userDTO);
-            AuthResponseDTO response = new AuthResponseDTO(token, userDTO);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseCookie cookie = generateCookies(token);
+            HttpHeaders headers = new HttpHeaders();
+            addCookiesToHeader(headers, cookie);
+            return new ResponseEntity<>(userDTO, headers, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>("Failed to register user.", HttpStatus.NOT_FOUND);
@@ -70,8 +73,22 @@ public class AuthController {
             UserDetails userDetails = userDetailsService.loadUserByUsername(authRequestDTO.getEmail());
             String token = jwtUtils.generateToken(userDetails.getUsername());
             UserDTO userDTO = userService.getUserByEmail(authRequestDTO.getEmail());
-            AuthResponseDTO response = new AuthResponseDTO(token, userDTO);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            ResponseCookie cookie = generateCookies(token);
+            HttpHeaders headers = new HttpHeaders();
+            addCookiesToHeader(headers, cookie);
+            return new ResponseEntity<>(userDTO, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        try {
+            ResponseCookie cookie = generateCookies(null);
+            HttpHeaders headers = new HttpHeaders();
+            addCookiesToHeader(headers, cookie);
+            return new ResponseEntity<>("User logged out.", headers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -87,6 +104,19 @@ public class AuthController {
         } catch (AuthenticationException e) {
             throw new Exception(e);
         }
+    }
+
+    private ResponseCookie generateCookies(String jwt) {
+        ResponseCookie cookie = ResponseCookie.from("auth_token", jwt)
+                .path("/")
+                .httpOnly(true)
+                .secure(false)
+                .build();
+        return cookie;
+    }
+
+    private void addCookiesToHeader(HttpHeaders headers, ResponseCookie cookie) {
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
 }

@@ -13,12 +13,29 @@ import org.springframework.web.bind.annotation.RestController;
 import com.debjit.justsplit_server.model.UserDTO;
 import com.debjit.justsplit_server.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping(path = "/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081/", allowCredentials = "true")
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request) {
+        try {
+            String userEmail = request.getAttribute("user_email").toString();
+            UserDTO user = userService.getUserByEmail(userEmail);
+
+            if (user != null) {
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+            throw new Exception();
+        } catch (Exception e) {
+            return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
+        }
+    }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<?> getUserById(@PathVariable(name = "id") String id) {

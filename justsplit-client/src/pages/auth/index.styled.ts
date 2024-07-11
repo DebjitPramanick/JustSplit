@@ -4,6 +4,7 @@ import colors from "~/styles/colors";
 import TwoWavyLines from "~/assets/vectors/two-wavy-lines.svg?react";
 import { fadeIn, slideUp } from "~/styles/animations";
 import { mediaQueryMobileOrTablet } from "~/styles/mixins";
+import { Link } from "react-router-dom";
 
 export const LeftSection = styled(Flex)`
   padding: 24px;
@@ -61,7 +62,7 @@ export const InputLabel = styled(Text).attrs({ as: "label" })`
   color: ${colors.TEXT_NEUTRAL_WEAK};
 `;
 
-export const TextLink = styled(Text).attrs({ as: "a" })`
+export const TextLink = styled(Text).attrs({ as: Link })`
   font-size: 14px;
   font-weight: bold;
   text-decoration: none;

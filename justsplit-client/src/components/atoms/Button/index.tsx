@@ -12,6 +12,7 @@ interface IButtonProps extends UnstyledButtonProps {
   text: string;
   onClick: () => void;
   disabled?: boolean;
+  outlined?: boolean;
 }
 
 const SIZES: { SMALL: ISize; MEDIUM: ISize; LARGE: ISize } = {

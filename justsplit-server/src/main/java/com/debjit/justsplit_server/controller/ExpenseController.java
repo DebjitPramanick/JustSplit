@@ -21,7 +21,7 @@ import com.debjit.justsplit_server.service.ExpenseService;
 
 @RestController
 @RequestMapping(path = "/api")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8081/", allowCredentials = "true")
 public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;

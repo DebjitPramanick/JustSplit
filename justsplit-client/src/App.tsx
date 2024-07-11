@@ -1,13 +1,21 @@
-import { QueryClient, QueryClientProvider } from "react-query";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import SignUpPage from "~/pages/auth/SignUpPage";
-
-const queryClient = new QueryClient();
+import LoginPage from "./pages/auth/LoginPage";
+import DashboardPage from "./pages/dashboard";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SignUpPage />
-    </QueryClientProvider>
+    <Router>
+      <Routes>
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
+
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route path="/" element={<DashboardPage />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
