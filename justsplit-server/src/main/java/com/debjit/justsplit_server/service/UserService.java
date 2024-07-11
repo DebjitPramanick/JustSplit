@@ -2,7 +2,6 @@ package com.debjit.justsplit_server.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ public class UserService {
         try {
             return userRepo.findById(id).get();
         } catch (Exception e) {
-            throw new Exception("Failed to find user.");
+            return null;
         }
     }
 
@@ -31,7 +30,7 @@ public class UserService {
         try {
             return userRepo.findOneByEmail(email).get();
         } catch (Exception e) {
-            throw new Exception("Failed to find user.");
+            return null;
         }
     }
 
@@ -39,7 +38,7 @@ public class UserService {
         try {
             return userRepo.findByGroupIdsContaining(groupId);
         } catch (Exception e) {
-            throw new Exception("Failed to find user.");
+            return null;
         }
     }
 

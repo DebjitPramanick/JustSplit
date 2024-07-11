@@ -1,6 +1,6 @@
 const makeHttpRequest = async (
   url: string,
-  { method, headers: extraHeaders, ...rest }
+  { method, headers: extraHeaders, ...rest }: RequestInit
 ) => {
   const headers = {
     Accept: "application/json",
@@ -15,75 +15,60 @@ const makeHttpRequest = async (
     headers,
     ...rest,
   });
-  const responseCopy = response.clone();
 
   // status in the range 200-299
   if (response.ok) {
     try {
       return response.json();
     } catch (err) {
-      const error = new Error(
+      const error: Error = new Error(
         "Failed to parse successful response body as JSON"
       );
-      error.response = response;
-      error.payload = undefined;
       throw error;
     }
   }
 
-  // { response, payload?, payloadText? }
-  const error = new Error(
-    `Async fetch to ${url} failed with status code: ${response.status}`
-  );
-  error.response = response;
-  try {
-    error.payload = utils.camelcaseKeys(await response.json(), {
-      deep: true,
-    });
-  } catch (err) {
-    // Response does not contain JSON
-    error.payload = undefined;
-    error.payloadText = await responseCopy.text();
-  }
+  const errorResponse: { message: string } = await response.json();
+  const error = new Error(errorResponse.message);
   throw error;
 };
 
 const httpClient = {
-  get: (url, options = null) =>
+  get: (url: string, options: Partial<RequestInit> = {}) =>
     makeHttpRequest(url, {
       method: "GET",
       ...options,
     }),
 
-  patch: (url, payload, options = null) =>
+  patch: (url: string, payload: object, options: Partial<RequestInit> = {}) =>
     makeHttpRequest(url, {
       method: "PATCH",
       body: payload ? JSON.stringify(payload) : null,
       ...options,
     }),
 
-  post: (url, payload, options) =>
+  post: (url: string, payload: object, options: Partial<RequestInit> = {}) =>
     makeHttpRequest(url, {
       method: "POST",
       body: payload ? JSON.stringify(payload) : null,
       ...options,
     }),
 
-  put: (url, payload, options) =>
+  put: (url: string, payload: object, options: Partial<RequestInit> = {}) =>
     makeHttpRequest(url, {
       method: "PUT",
       body: payload ? JSON.stringify(payload) : null,
       ...options,
     }),
 
-  postFile: (url, body, options) =>
+  postFile: (url: string, body: BodyInit, options: Partial<RequestInit> = {}) =>
     makeHttpRequest(url, {
       method: "POST",
       body,
       ...options,
     }),
 
-  delete: (url, options = null) =>
+  delete: (url: string, options: Partial<RequestInit> = {}) =>
     makeHttpRequest(url, {
       method: "DELETE",
       ...options,

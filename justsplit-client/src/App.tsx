@@ -3,6 +3,7 @@ import SignUpPage from "~/pages/auth/SignUpPage";
 import LoginPage from "./pages/auth/LoginPage";
 import DashboardPage from "./pages/dashboard";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
+import { UserProvider } from "./hooks/useUser";
 
 function App() {
   return (
@@ -10,11 +11,14 @@ function App() {
       <Routes>
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
-
-        <Route path="/" element={<ProtectedRoute />}>
-          <Route path="/" element={<DashboardPage />} />
-        </Route>
       </Routes>
+      <UserProvider>
+        <Routes>
+          <Route path="/" element={<ProtectedRoute />}>
+            <Route path="/" element={<DashboardPage />} />
+          </Route>
+        </Routes>
+      </UserProvider>
     </Router>
   );
 }

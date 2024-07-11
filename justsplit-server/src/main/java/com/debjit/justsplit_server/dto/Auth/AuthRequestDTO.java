@@ -1,4 +1,4 @@
-package com.debjit.justsplit_server.model.Auth;
+package com.debjit.justsplit_server.dto.Auth;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,6 +3,7 @@ import { Box, Button, Flex, Input } from "~/components/atoms";
 import {
   AuthForm,
   AuthFormContainer,
+  ErrorText,
   FormTitle,
   HeaderBranding,
   InputLabel,
@@ -39,7 +40,7 @@ const RIGHT_SIDE_CONTENT_NODES = [
 ];
 
 const SignUpPage = () => {
-  const { signupUser } = useUserApi();
+  const { signupUserMutation } = useUserApi();
   const navigate = useNavigate();
   const [pageState, setPageState] = useImmer({
     name: "",
@@ -47,6 +48,7 @@ const SignUpPage = () => {
     password: "",
     confirmedPassword: "",
     currentRightSideNodeIdx: 0,
+    errorMsg: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,12 +61,18 @@ const SignUpPage = () => {
 
   const handleFormSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (pageState.confirmedPassword !== pageState.password) {
+      setPageState((draft) => {
+        draft.errorMsg = "Passwords are not matching.";
+      });
+      return;
+    }
     const payload = {
       name: pageState.name,
       email: pageState.email,
       password: pageState.password,
     };
-    signupUser.mutate(
+    signupUserMutation.mutate(
       {
         payload,
       },
@@ -72,9 +80,20 @@ const SignUpPage = () => {
         onSuccess: () => {
           navigate("/");
         },
+        onError: (error) => {
+          setPageState((draft) => {
+            draft.errorMsg = (error as Error).message;
+          });
+        },
       }
     );
   };
+
+  let errorMsgNode;
+
+  if (pageState.errorMsg) {
+    errorMsgNode = <ErrorText>ERROR: {pageState.errorMsg}</ErrorText>;
+  }
 
   useEffect(() => {
     // Function to update the current index
@@ -110,6 +129,7 @@ const SignUpPage = () => {
                 mt="8px"
                 onChange={handleInputChange}
                 value={pageState.name}
+                required
               />
             </Box>
             <Box mt="24px">
@@ -121,6 +141,7 @@ const SignUpPage = () => {
                 type="email"
                 onChange={handleInputChange}
                 value={pageState.email}
+                required
               />
             </Box>
             <Box mt="24px">
@@ -132,6 +153,7 @@ const SignUpPage = () => {
                 mt="8px"
                 onChange={handleInputChange}
                 value={pageState.password}
+                required
               />
             </Box>
             <Box mt="24px">
@@ -142,15 +164,18 @@ const SignUpPage = () => {
                 mt="8px"
                 onChange={handleInputChange}
                 value={pageState.confirmedPassword}
+                required
               />
             </Box>
+            {errorMsgNode ? <Box mt="12px">{errorMsgNode}</Box> : null}
             <Flex justifyContent="space-between" alignItems="center" mt="32px">
               <TextLink to="/login">Already an user? Log In</TextLink>
               <Button
                 text="Signup"
                 type="submit"
                 ml="16px"
-                onClick={() => {}}
+                loading={signupUserMutation.isLoading}
+                disabled={signupUserMutation.isLoading}
               />
             </Flex>
           </AuthForm>

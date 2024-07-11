@@ -4,10 +4,18 @@ import { Button } from "~/components/atoms";
 import useUserApi from "~/api/user";
 
 const Header = () => {
-  const { logoutUser } = useUserApi();
+  const { logoutUserMutation } = useUserApi();
 
   const handleLogoutBtnClick = () => {
-    logoutUser.mutate();
+    logoutUserMutation.mutate(
+      {},
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          window.location.href = "/login";
+        },
+      }
+    );
   };
 
   return (
@@ -22,6 +30,8 @@ const Header = () => {
             size="medium"
             outlined
             onClick={handleLogoutBtnClick}
+            loading={logoutUserMutation.isLoading}
+            disabled={logoutUserMutation.isLoading}
           />
         </Styles.Container>
       </Styles.HeaderRoot>

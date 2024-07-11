@@ -21,25 +21,25 @@ const BlackListedRoutesForLoggedInUser = ["/login", "/signup"];
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { getLoggedInUser } = useUserApi();
+  const { getLoggedInUserQuery } = useUserApi();
+
+  console.log("RE_RENDERING");
 
   const isAuthPages = BlackListedRoutesForLoggedInUser.includes(
     window.location.pathname
   );
 
-  const { data: user, isLoading: isPending, isError, error } = getLoggedInUser;
-
   useEffect(() => {
-    if (user && isAuthPages) {
+    if (getLoggedInUserQuery.isSuccess && isAuthPages) {
       window.location.href = "/";
     }
-  }, [user, isAuthPages]);
+  }, [getLoggedInUserQuery.isSuccess, isAuthPages]);
 
   const values = {
-    user,
-    isPending,
-    isError,
-    error,
+    user: getLoggedInUserQuery.data,
+    isPending: getLoggedInUserQuery.isLoading,
+    isError: getLoggedInUserQuery.isError,
+    error: getLoggedInUserQuery.error,
   };
 
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;

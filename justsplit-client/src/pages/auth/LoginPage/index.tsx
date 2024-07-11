@@ -3,6 +3,7 @@ import { Box, Button, Flex, Input } from "~/components/atoms";
 import {
   AuthForm,
   AuthFormContainer,
+  ErrorText,
   FormTitle,
   HeaderBranding,
   InputLabel,
@@ -42,11 +43,12 @@ const RIGHT_SIDE_CONTENT_NODES = [
 const LoginPage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
-  const { loginUser } = useUserApi();
+  const { loginUserMutation } = useUserApi();
   const [pageState, setPageState] = useImmer({
     email: "",
     password: "",
     currentRightSideNodeIdx: 0,
+    errorMsg: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +65,7 @@ const LoginPage = () => {
       email: pageState.email,
       password: pageState.password,
     };
-    loginUser.mutate(
+    loginUserMutation.mutate(
       {
         payload,
       },
@@ -71,9 +73,20 @@ const LoginPage = () => {
         onSuccess: () => {
           navigate("/");
         },
+        onError: (error) => {
+          setPageState((draft) => {
+            draft.errorMsg = (error as Error).message;
+          });
+        },
       }
     );
   };
+
+  let errorMsgNode;
+
+  if (pageState.errorMsg) {
+    errorMsgNode = <ErrorText>ERROR: {pageState.errorMsg}</ErrorText>;
+  }
 
   useEffect(() => {
     // Function to update the current index
@@ -117,6 +130,7 @@ const LoginPage = () => {
                 type="email"
                 onChange={handleInputChange}
                 value={pageState.email}
+                required
               />
             </Box>
             <Box mt="24px">
@@ -128,15 +142,18 @@ const LoginPage = () => {
                 mt="8px"
                 onChange={handleInputChange}
                 value={pageState.password}
+                required
               />
             </Box>
+            {errorMsgNode ? <Box mt="12px">{errorMsgNode}</Box> : null}
             <Flex justifyContent="space-between" alignItems="center" mt="32px">
               <TextLink to="/signup">Not an user? Sign Up</TextLink>
               <Button
                 text="Log In"
                 type="submit"
                 ml="16px"
-                onClick={() => {}}
+                loading={loginUserMutation.isLoading}
+                disabled={loginUserMutation.isLoading}
               />
             </Flex>
           </AuthForm>

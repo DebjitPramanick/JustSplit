@@ -86,3 +86,8 @@ export const RightSideText = styled(Text)`
   ${fadeIn(300)};
   ${slideUp(300, "100px")};
 `;
+
+export const ErrorText = styled(Text)`
+  font-size: 14px;
+  color: ${colors.TEXT_NEGATIVE_WEAK};
+`;

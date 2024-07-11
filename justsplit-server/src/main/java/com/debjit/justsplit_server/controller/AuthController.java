@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.debjit.justsplit_server.model.UserDTO;
-import com.debjit.justsplit_server.model.Auth.AuthRequestDTO;
+import com.debjit.justsplit_server.dto.Auth.AuthRequestDTO;
+import com.debjit.justsplit_server.dto.Misc.ResponseWithMessageDTO;
 import com.debjit.justsplit_server.service.UserService;
 import com.debjit.justsplit_server.service.AuthService.CustomUserDetailsService;
 import com.debjit.justsplit_server.service.AuthService.JwtUtils;
@@ -47,7 +48,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody AuthRequestDTO authRequestDTO) {
         try {
-            UserDTO userDTO = new UserDTO();
+
+            UserDTO userDTO = userService.getUserByEmail(authRequestDTO.getEmail());
+            if (userDTO != null) {
+                throw new Exception("User already exists with this email.");
+            }
+            userDTO = new UserDTO();
             userDTO.setName(authRequestDTO.getName());
             userDTO.setEmail(authRequestDTO.getEmail());
             userDTO.setPassword(passwordEncoder.encode(authRequestDTO.getPassword()));
@@ -61,8 +67,8 @@ public class AuthController {
             addCookiesToHeader(headers, cookie);
             return new ResponseEntity<>(userDTO, headers, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>("Failed to register user.", HttpStatus.NOT_FOUND);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to register user.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -78,7 +84,8 @@ public class AuthController {
             addCookiesToHeader(headers, cookie);
             return new ResponseEntity<>(userDTO, headers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to login user.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -88,9 +95,11 @@ public class AuthController {
             ResponseCookie cookie = generateCookies(null);
             HttpHeaders headers = new HttpHeaders();
             addCookiesToHeader(headers, cookie);
-            return new ResponseEntity<>("User logged out.", headers, HttpStatus.OK);
+            ResponseWithMessageDTO response = new ResponseWithMessageDTO("User is logged out.");
+            return new ResponseEntity<>(response, headers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to logout user.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NOT_FOUND);
         }
     }
 

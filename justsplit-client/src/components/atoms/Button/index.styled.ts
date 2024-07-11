@@ -6,6 +6,8 @@ export const Root = styled(UnstyledButton)<{
   fontSize: number;
   outlined?: boolean;
 }>`
+  display: flex;
+  align-items: center;
   height: ${({ height }) => `${height}px`};
   width: auto;
   padding: 0 24px;
@@ -22,7 +24,11 @@ export const Root = styled(UnstyledButton)<{
 
   &:hover {
     background-color: ${colors.BG_ACCENT_WEAK};
-    color: ${({ outlined }) =>
-      outlined ? colors.TEXT_INVERTED : colors.TEXT_ACCENT_NORMAL};
+    color: ${colors.TEXT_INVERTED};
+  }
+
+  &:disabled {
+    background-color: ${colors.BG_ACCENT_WEAK};
+    cursor: not-allowed;
   }
 `;

@@ -1,16 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
 import useUser from "~/hooks/useUser";
+import { PageLoader } from "../molecules";
 
 const ProtectedRoute = ({ redirectPath = "/login" }) => {
   const { user, isPending } = useUser();
 
   if (isPending) {
-    return (
-      <>
-        <ClipLoader />
-      </>
-    );
+    return <PageLoader />;
   }
 
   if (!user) {
