@@ -13,6 +13,9 @@ public interface ExpenseRepository extends MongoRepository<ExpenseDTO, String> {
     @Query(value = "{ 'groupId' : null }")
     List<ExpenseDTO> findByPaidByAndParticipantsContaining(String paidBy, String participant);
 
+    @Query(value = "{ 'groupId' : null }")
+    List<ExpenseDTO> findByPaidByOrParticipantsContaining(String paidBy, String participant);
+
     List<ExpenseDTO> findByGroupId(String groupId);
 
 }

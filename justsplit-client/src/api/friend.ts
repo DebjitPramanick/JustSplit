@@ -4,17 +4,17 @@ import { IGroup } from "~/types";
 
 const API_URL = import.meta.env.VITE_APP_SERVER_URL;
 
-const makeRequestToFetchUserGroups = (userId: string) =>
-  httpClient.get(`${API_URL}/groups/users/${userId}`);
+const makeRequestToFetchUserFriends = (userId: string) =>
+  httpClient.get(`${API_URL}/users/${userId}/friends`);
 
 const makeRequestToCreateGroup = ({ payload }: { payload: Partial<IGroup> }) =>
   httpClient.post(`${API_URL}/groups`, payload);
 
-const useGroupApi = ({ userId }: { userId: string }) => {
+const useFriendApi = ({ userId }: { userId: string }) => {
   const queryClient = useQueryClient();
 
-  const getUserGroupsQuery = useQuery(["group"], () =>
-    makeRequestToFetchUserGroups(userId)
+  const getUserFriendsQuery = useQuery(["friend"], () =>
+    makeRequestToFetchUserFriends(userId)
   );
 
   const createGroupMutation = useMutation(makeRequestToCreateGroup, {
@@ -40,8 +40,8 @@ const useGroupApi = ({ userId }: { userId: string }) => {
     updateGroupMutation,
     deleteGroupMutation,
 
-    getUserGroupsQuery,
+    getUserFriendsQuery,
   };
 };
 
-export default useGroupApi;
+export default useFriendApi;

@@ -14,4 +14,6 @@ public interface UserRepository extends MongoRepository<UserDTO, String> {
     Optional<UserDTO> findOneByEmail(String email);
 
     List<UserDTO> findByGroupIdsContaining(String groupId);
+
+    List<UserDTO> findByIdIn(List<String> userIds);
 }

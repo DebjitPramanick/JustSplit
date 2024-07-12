@@ -27,7 +27,7 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @GetMapping("/group/{id}")
+    @GetMapping("/groups/{id}")
     public ResponseEntity<?> getGroupById(@PathVariable String id) {
         try {
             GroupDTO groupDTO = groupService.getGroupById(id);
@@ -41,7 +41,7 @@ public class GroupController {
         }
     }
 
-    @GetMapping("/group/user/{userId}")
+    @GetMapping("/groups/users/{userId}")
     public ResponseEntity<?> getGroupByUserId(@PathVariable String userId) {
         try {
             List<GroupDTO> groups = groupService.getGroupsOfUser(userId);
@@ -52,7 +52,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/group")
+    @PostMapping("/groups")
     public ResponseEntity<?> cerateGroup(@RequestBody GroupDTO groupDTO) {
         try {
             groupDTO = groupService.createGroup(groupDTO, groupDTO.getCreatedBy());
@@ -63,7 +63,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/group/add-user")
+    @PostMapping("/groups/add-user")
     public ResponseEntity<?> addUserToGroup(@RequestBody AddToGroupDTO addToGroupDTO) {
         try {
             groupService.addToGroup(addToGroupDTO.getGroupId(), addToGroupDTO.getUserId());
@@ -74,7 +74,7 @@ public class GroupController {
         }
     }
 
-    @PutMapping("/group/{id}")
+    @PutMapping("/groups/{id}")
     public ResponseEntity<?> updateGroup(@PathVariable(name = "id") String id, @RequestBody GroupDTO groupDTO) {
         try {
             groupDTO = groupService.updateGroup(id, groupDTO);
@@ -85,7 +85,7 @@ public class GroupController {
         }
     }
 
-    @DeleteMapping("/group/{id}")
+    @DeleteMapping("/groups/{id}")
     public ResponseEntity<?> deleteGroup(@PathVariable(name = "id") String id) {
         try {
             groupService.deleteGroup(id);

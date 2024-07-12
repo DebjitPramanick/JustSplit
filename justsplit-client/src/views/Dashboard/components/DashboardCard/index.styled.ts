@@ -1,11 +1,10 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Box, Flex, Text } from "~/components/atoms";
 import colors from "~/styles/colors";
 import { ellipsis, mediaQueryMobileOrTablet } from "~/styles/mixins";
 
 export const Root = styled(Box)`
-  min-height: 300px;
-
   background: ${colors.BG_SURFACE};
   border: 1px solid ${colors.BORDER_NEUTRAL_WEAKEST};
   border-radius: 8px;
@@ -30,9 +29,23 @@ export const Title = styled(Text)`
   font-weight: 600;
 `;
 
-export const RowsContainer = styled(Box)``;
+export const RowsContainer = styled(Box)`
+  height: 280px;
+  overflow-y: auto;
+`;
 
-export const ExpenseRow = styled(Flex)`
+export const RowDisplayTitle = styled(Text)`
+  font-size: 16px;
+  max-width: 200px;
+  ${ellipsis};
+  transition: color 300ms ease-in-out;
+
+  ${mediaQueryMobileOrTablet} {
+    font-size: 14px;
+  }
+`;
+
+export const Row = styled(Flex).attrs({ as: Link })`
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
@@ -40,16 +53,10 @@ export const ExpenseRow = styled(Flex)`
   &:hover {
     transition: background-color 300ms ease-in-out;
     background-color: ${colors.BG_NEUTRAL_WEAKEST};
-  }
-`;
 
-export const ExpenseRowDisplayTitle = styled(Text)`
-  font-size: 16px;
-  max-width: 200px;
-  ${ellipsis};
-
-  ${mediaQueryMobileOrTablet} {
-    font-size: 14px;
+    ${RowDisplayTitle} {
+      color: ${colors.TEXT_ACCENT_NORMAL};
+    }
   }
 `;
 

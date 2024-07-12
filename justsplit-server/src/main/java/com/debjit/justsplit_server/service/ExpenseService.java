@@ -38,6 +38,15 @@ public class ExpenseService {
         }
     }
 
+    public List<ExpenseDTO> getExpensesByUserId(String userId) throws Exception {
+        try {
+            List<ExpenseDTO> expenses = expenseRepo.findByPaidByOrParticipantsContaining(userId, userId);
+            return expenses;
+        } catch (Exception e) {
+            throw new Exception("Failed to find expenses.");
+        }
+    }
+
     public List<ExpenseDTO> getExpensesByGroupId(String groupId) throws Exception {
         try {
             List<ExpenseDTO> expenses = expenseRepo.findByGroupId(groupId);

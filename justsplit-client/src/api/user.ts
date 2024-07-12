@@ -4,7 +4,7 @@ import { IUser } from "~/types";
 
 const API_URL = import.meta.env.VITE_APP_SERVER_URL;
 
-const makeRequestToFetchUser = () => httpClient.get(`${API_URL}/user`);
+const makeRequestToFetchUser = () => httpClient.get(`${API_URL}/users`);
 
 const makeRequestToSignupUser = ({ payload }: { payload: Partial<IUser> }) =>
   httpClient.post(`${API_URL}/signup`, payload);

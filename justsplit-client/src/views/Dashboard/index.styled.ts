@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Box, Text } from "~/components/atoms";
 import { PageContainer } from "~/components/layout";
 import colors from "~/styles/colors";
-import { mediaQueryMobile } from "~/styles/mixins";
+import { mediaQueryMobile, mediaQueryMobileOrTablet } from "~/styles/mixins";
 
 export const Root = styled(Box)`
   position: relative;
@@ -48,7 +48,15 @@ export const PageDescription = styled(Text)`
 
 export const CardsContainer = styled(Box)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   row-gap: 24px;
   column-gap: 16px;
+
+  ${mediaQueryMobileOrTablet} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  ${mediaQueryMobile} {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `;

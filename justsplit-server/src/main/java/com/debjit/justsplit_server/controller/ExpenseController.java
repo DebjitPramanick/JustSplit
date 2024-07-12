@@ -26,7 +26,7 @@ public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
 
-    @GetMapping("/expense/private")
+    @GetMapping("/expenses/private")
     public ResponseEntity<?> getExpensesByParticipants(@RequestParam(name = "paidBy", required = true) String paidBy,
             @RequestParam(name = "participantId", required = true) String participantId) {
         try {
@@ -37,7 +37,7 @@ public class ExpenseController {
         }
     }
 
-    @GetMapping("/expense/group")
+    @GetMapping("/expenses/group")
     public ResponseEntity<?> getExpensesByGroup(@RequestParam(name = "groupId", required = true) String groupId) {
         try {
             List<ExpenseDTO> expenses = expenseService.getExpensesByGroupId(groupId);
@@ -47,7 +47,7 @@ public class ExpenseController {
         }
     }
 
-    @PostMapping("/expense")
+    @PostMapping("/expenses")
     public ResponseEntity<?> createExpense(@RequestBody ExpenseDTO expenseDTO) {
         try {
             expenseDTO = expenseService.createExpense(expenseDTO);
@@ -57,7 +57,7 @@ public class ExpenseController {
         }
     }
 
-    @PutMapping("/expense/{id}")
+    @PutMapping("/expenses/{id}")
     public ResponseEntity<?> updateExpense(@PathVariable(name = "id", required = true) String id,
             @RequestBody ExpenseDTO expenseDTO) {
         try {
@@ -68,7 +68,7 @@ public class ExpenseController {
         }
     }
 
-    @DeleteMapping("/expense/{id}")
+    @DeleteMapping("/expenses/{id}")
     public ResponseEntity<?> deleteExpense(@PathVariable(name = "id", required = true) String id) {
         try {
             expenseService.deleteExpense(id);
