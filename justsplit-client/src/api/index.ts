@@ -1,1 +1,2 @@
-export { default as userApi } from "./user";
+export { default as useUserApi } from "./user";
+export { default as useGroupApi } from "./group";

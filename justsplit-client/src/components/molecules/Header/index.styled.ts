@@ -4,16 +4,16 @@ import colors from "~/styles/colors";
 import { mediaQueryMobileOrTablet } from "~/styles/mixins";
 
 export const Root = styled(Box)`
-  height: 84px;
+  height: 56px;
   padding: 16px;
 
   ${mediaQueryMobileOrTablet} {
-    height: 56px;
+    height: 48px;
   }
 `;
 
 export const HeaderRoot = styled(Box)`
-  height: 84px;
+  height: 56px;
   box-shadow: 0 0 10px grey;
   background: ${colors.BG_SURFACE};
   border-bottom: 1px solid #e9e9e9;
@@ -24,7 +24,7 @@ export const HeaderRoot = styled(Box)`
   z-index: 99;
 
   ${mediaQueryMobileOrTablet} {
-    height: 56px;
+    height: 48px;
   }
 `;
 

@@ -1,5 +1,6 @@
 import { useContext, createContext, useEffect } from "react";
-import useUserApi from "~/api/user";
+import { useUserApi } from "~/api";
+
 import { IUser } from "~/types";
 
 interface IUserContextProps {

@@ -1,5 +1,6 @@
 package com.debjit.justsplit_server.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,20 @@ public class GroupService {
     public GroupDTO getGroupById(String groupId) throws Exception {
         try {
             return groupRepo.findById(groupId).get();
+        } catch (Exception e) {
+            throw new Exception("Failed to find group.");
+        }
+    }
+
+    public List<GroupDTO> getGroupsOfUser(String userId) throws Exception {
+        try {
+            UserDTO userDTO = userService.getUserById(userId);
+            if (userDTO == null) {
+                return new ArrayList<>();
+            }
+            List<String> groupIds = userDTO.getGroupIds();
+            List<GroupDTO> groups = groupRepo.findByIdIn(groupIds);
+            return groups;
         } catch (Exception e) {
             throw new Exception("Failed to find group.");
         }

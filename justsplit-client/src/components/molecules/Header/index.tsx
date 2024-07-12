@@ -1,7 +1,7 @@
 import colors from "~/styles/colors";
 import * as Styles from "./index.styled";
 import { Button } from "~/components/atoms";
-import useUserApi from "~/api/user";
+import { useUserApi } from "~/api";
 
 const Header = () => {
   const { logoutUserMutation } = useUserApi();

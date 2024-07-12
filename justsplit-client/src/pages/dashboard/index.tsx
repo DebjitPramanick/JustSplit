@@ -1,11 +1,7 @@
-import { Header } from "~/components/molecules";
+import DashboardView from "~/views/Dashboard";
 
 const DashboardPage = () => {
-  return (
-    <>
-      <Header />
-    </>
-  );
+  return <DashboardView />;
 };
 
 export default DashboardPage;

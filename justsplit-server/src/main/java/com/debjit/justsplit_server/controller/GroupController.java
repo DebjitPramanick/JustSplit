@@ -1,6 +1,6 @@
 package com.debjit.justsplit_server.controller;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.debjit.justsplit_server.dto.Group.AddToGroupDTO;
+import com.debjit.justsplit_server.dto.Misc.ResponseWithMessageDTO;
 import com.debjit.justsplit_server.model.GroupDTO;
-import com.debjit.justsplit_server.model.UserDTO;
 import com.debjit.justsplit_server.service.GroupService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +36,19 @@ public class GroupController {
             }
             return new ResponseEntity<>("No group found.", HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to get group.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/group/user/{userId}")
+    public ResponseEntity<?> getGroupByUserId(@PathVariable String userId) {
+        try {
+            List<GroupDTO> groups = groupService.getGroupsOfUser(userId);
+            return new ResponseEntity<>(groups, HttpStatus.OK);
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to get list groups.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -46,7 +58,8 @@ public class GroupController {
             groupDTO = groupService.createGroup(groupDTO, groupDTO.getCreatedBy());
             return new ResponseEntity<>(groupDTO, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to create group.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -56,7 +69,8 @@ public class GroupController {
             groupService.addToGroup(addToGroupDTO.getGroupId(), addToGroupDTO.getUserId());
             return new ResponseEntity<>("User is added to group successfully.", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to add user to group.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -66,7 +80,8 @@ public class GroupController {
             groupDTO = groupService.updateGroup(id, groupDTO);
             return new ResponseEntity<>(groupDTO, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to update group.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NO_CONTENT);
         }
     }
 
@@ -76,7 +91,8 @@ public class GroupController {
             groupService.deleteGroup(id);
             return new ResponseEntity<>("Group deleted successfully.", HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("No user found.", HttpStatus.NO_CONTENT);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Failed to delete group.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NO_CONTENT);
         }
     }
 }

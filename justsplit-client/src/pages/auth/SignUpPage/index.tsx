@@ -15,9 +15,9 @@ import {
 } from "../index.styled";
 import React, { useEffect } from "react";
 import { useImmer } from "use-immer";
-import useUserApi from "~/api/user";
 import colors from "~/styles/colors";
 import { useNavigate } from "react-router-dom";
+import { useUserApi } from "~/api";
 
 type FieldType = "name" | "email" | "password" | "confirmedPassword";
 
