@@ -15,3 +15,24 @@ export interface IGroup {
   createdAt: string;
   updatedAt: string;
 }
+
+export type SplitType = "EQUAL" | "UNEQUAL" | "PERCENTAGE";
+
+export interface IExpense {
+  id: string;
+  description: string;
+  groupId?: string;
+  amount: number;
+  splitType: SplitType;
+  paidBy: string;
+  participants: string[];
+  splits: ISplit[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ISplit {
+  userId: string;
+  amount?: number;
+  percentage?: number;
+}

@@ -4,14 +4,24 @@ import { useUserApi } from "~/api";
 import { IUser } from "~/types";
 
 interface IUserContextProps {
-  user: IUser | null;
+  user: IUser;
   isPending: boolean;
   isError: boolean;
   error: unknown | null;
 }
 
+const initialUser = {
+  id: "",
+  name: "",
+  email: "",
+  password: "",
+  token: "",
+  createdAt: "",
+  updatedAt: "",
+};
+
 const UserContext = createContext<IUserContextProps>({
-  user: null,
+  user: initialUser,
   isPending: false,
   isError: false,
   error: null,

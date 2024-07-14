@@ -1,7 +1,8 @@
 import React from "react";
+import FriendExpensesView from "~/views/FriendExpensesView";
 
 const FriendExpensesPage = () => {
-  return <div>FriendExpensesPage</div>;
+  return <FriendExpensesView />;
 };
 
 export default FriendExpensesPage;

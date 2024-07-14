@@ -10,7 +10,6 @@ export const Root = styled(UnstyledButton)<{
   align-items: center;
   height: ${({ height }) => `${height}px`};
   width: auto;
-  padding: 0 24px;
   text-align: center;
   font-size: ${({ fontSize }) => `${fontSize}px`};
   color: ${colors.TEXT_INVERTED};
@@ -18,7 +17,6 @@ export const Root = styled(UnstyledButton)<{
     outlined ? colors.TEXT_ACCENT_NORMAL : colors.TEXT_INVERTED};
   background-color: ${({ outlined }) =>
     outlined ? colors.BG_SURFACE : colors.BG_ACCENT_NORMAL};
-  border-radius: 4px;
   border: 1px solid ${colors.BORDER_ACCENT_STRONG};
   white-space: nowrap;
 
@@ -28,7 +26,8 @@ export const Root = styled(UnstyledButton)<{
   }
 
   &:disabled {
-    background-color: ${colors.BG_ACCENT_WEAK};
+    background-color: ${colors.BG_ACCENT_WEAKER};
+    border-color: ${colors.BORDER_ACCENT_WEAK};
     cursor: not-allowed;
   }
 `;

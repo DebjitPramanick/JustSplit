@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.debjit.justsplit_server.model.ExpenseDTO;
 import com.debjit.justsplit_server.service.ExpenseService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(path = "/api")
@@ -26,19 +27,20 @@ public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
 
-    @GetMapping("/expenses/private")
-    public ResponseEntity<?> getExpensesByParticipants(@RequestParam(name = "paidBy", required = true) String paidBy,
-            @RequestParam(name = "participantId", required = true) String participantId) {
+    @GetMapping("/expenses/friends/{friendId}")
+    public ResponseEntity<?> getExpensesByParticipants(HttpServletRequest request,
+            @PathVariable(name = "friendId", required = true) String friendId) {
         try {
-            List<ExpenseDTO> expenses = expenseService.getExpensesByParticipants(paidBy, participantId);
+            String loggedInUserId = request.getAttribute("user_id").toString();
+            List<ExpenseDTO> expenses = expenseService.getExpensesByParticipants(loggedInUserId, friendId);
             return new ResponseEntity<List<ExpenseDTO>>(expenses, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/expenses/group")
-    public ResponseEntity<?> getExpensesByGroup(@RequestParam(name = "groupId", required = true) String groupId) {
+    @GetMapping("/expenses/groups/{groupId}")
+    public ResponseEntity<?> getExpensesByGroup(@PathVariable(name = "groupId", required = true) String groupId) {
         try {
             List<ExpenseDTO> expenses = expenseService.getExpensesByGroupId(groupId);
             return new ResponseEntity<List<ExpenseDTO>>(expenses, HttpStatus.OK);

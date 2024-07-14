@@ -12,6 +12,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.debjit.justsplit_server.model.UserDTO;
+import com.debjit.justsplit_server.service.UserService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +29,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 
@@ -52,8 +58,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 // Setting the authentication token in security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                // Setting user's email in the request object
+                UserDTO userDTO = userService.getUserByEmail(email);
+
+                // Setting user's email and id in the request object
                 request.setAttribute("user_email", email);
+                request.setAttribute("user_id", userDTO.getId());
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e.getMessage());

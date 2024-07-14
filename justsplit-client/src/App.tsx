@@ -25,7 +25,7 @@ function App() {
               element={<GroupExpensesPage />}
             />
             <Route
-              path="/expenses/friend/:userId"
+              path="/expenses/friend/:friendId"
               element={<FriendExpensesPage />}
             />
           </Route>

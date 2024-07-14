@@ -26,8 +26,8 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<?> getLoggedInUser(HttpServletRequest request) {
         try {
-            String userEmail = request.getAttribute("user_email").toString();
-            UserDTO user = userService.getUserByEmail(userEmail);
+            String loggedInUserId = request.getAttribute("user_id").toString();
+            UserDTO user = userService.getUserById(loggedInUserId);
 
             if (user != null) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
@@ -35,6 +35,18 @@ public class UserController {
             throw new Exception();
         } catch (Exception e) {
             String errorMsg = e.getMessage() != null ? e.getMessage() : "No user found.";
+            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/users/friends")
+    public ResponseEntity<?> getUserFriends(HttpServletRequest request) {
+        try {
+            String loggedInUserId = request.getAttribute("user_id").toString();
+            List<UserDTO> friends = userService.getUserFriends(loggedInUserId);
+            return new ResponseEntity<>(friends, HttpStatus.OK);
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "No friends found.";
             return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NO_CONTENT);
         }
     }
@@ -61,17 +73,6 @@ public class UserController {
             return new ResponseEntity<>(users, HttpStatus.OK);
         } catch (Exception e) {
             String errorMsg = e.getMessage() != null ? e.getMessage() : "No users found.";
-            return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NO_CONTENT);
-        }
-    }
-
-    @GetMapping("/users/{userId}/friends")
-    public ResponseEntity<?> getUserFriends(@PathVariable(name = "userId") String userId) {
-        try {
-            List<UserDTO> friends = userService.getUserFriends(userId);
-            return new ResponseEntity<>(friends, HttpStatus.OK);
-        } catch (Exception e) {
-            String errorMsg = e.getMessage() != null ? e.getMessage() : "No friends found.";
             return new ResponseEntity<>(new ResponseWithMessageDTO(errorMsg), HttpStatus.NO_CONTENT);
         }
     }

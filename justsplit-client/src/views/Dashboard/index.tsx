@@ -8,9 +8,7 @@ import CTAFooter from "./components/CTAFooter";
 
 const DashboardView = () => {
   const { user } = useUser();
-  const { getUserFriendsQuery } = useFriendApi({
-    userId: user?.id || "",
-  });
+  const { getUserFriendsQuery } = useFriendApi();
   const { getUserGroupsQuery, createGroupMutation } = useGroupApi({
     userId: user?.id || "",
   });
@@ -25,7 +23,10 @@ const DashboardView = () => {
     friendsNode = (
       <DashboardCard title="Friends">
         {userFriends.map((friend: IUser) => (
-          <DashboardCard.FriendsRow friend={friend}></DashboardCard.FriendsRow>
+          <DashboardCard.FriendsRow
+            key={friend.id}
+            friend={friend}
+          ></DashboardCard.FriendsRow>
         ))}
       </DashboardCard>
     );
@@ -36,7 +37,10 @@ const DashboardView = () => {
     groupsNode = (
       <DashboardCard title="Groups">
         {userGroups.map((group: IGroup) => (
-          <DashboardCard.GroupsRow group={group}></DashboardCard.GroupsRow>
+          <DashboardCard.GroupsRow
+            key={group.id}
+            group={group}
+          ></DashboardCard.GroupsRow>
         ))}
       </DashboardCard>
     );
@@ -57,7 +61,10 @@ const DashboardView = () => {
             {groupsNode}
           </Styles.CardsContainer>
         </Styles.Container>
-        <CTAFooter />
+        <CTAFooter
+          friends={getUserFriendsQuery.data}
+          groups={getUserGroupsQuery.data}
+        />
       </Styles.Root>
     </>
   );

@@ -23,17 +23,27 @@ const SIZES: { SMALL: ISize; MEDIUM: ISize; LARGE: ISize } = {
 
 const getButtonHeight = (size: ISize) => {
   if (size == SIZES.LARGE) {
-    return 56;
-  } else if (size === SIZES.MEDIUM) {
     return 48;
+  } else if (size === SIZES.MEDIUM) {
+    return 40;
   } else {
     return 32;
   }
 };
 
+const getBtnHorizontalPadding = (size: ISize) => {
+  if (size == SIZES.LARGE) {
+    return 20;
+  } else if (size === SIZES.MEDIUM) {
+    return 18;
+  } else {
+    return 14;
+  }
+};
+
 const getFontSize = (size: ISize) => {
   if (size == SIZES.LARGE) {
-    return 24;
+    return 20;
   } else if (size === SIZES.MEDIUM) {
     return 16;
   } else {
@@ -58,8 +68,10 @@ const Button = forwardRef(
   ) => {
     const { size = SIZES.MEDIUM, loading, text, ...rest } = props;
     const height = getButtonHeight(size);
+    const horizontalPadding = getBtnHorizontalPadding(size);
     const fontSize = getFontSize(size);
     const loaderSize = getLoaderSize(size);
+    const borderRadius = height / 2;
 
     let loadingNode;
 
@@ -72,7 +84,14 @@ const Button = forwardRef(
     }
 
     return (
-      <Root height={height} fontSize={fontSize} {...rest} ref={ref}>
+      <Root
+        height={height}
+        fontSize={fontSize}
+        px={`${horizontalPadding}px`}
+        borderRadius={`${borderRadius}px`}
+        {...rest}
+        ref={ref}
+      >
         {loadingNode}
         {text}
       </Root>
