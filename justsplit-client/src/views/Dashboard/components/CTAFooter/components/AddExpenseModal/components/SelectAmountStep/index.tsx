@@ -1,5 +1,7 @@
 import { Box, Input } from "~/components/atoms";
 
+import * as SharedStyles from "../index.styled";
+
 interface IProps {
   amount: number;
   description: string;
@@ -25,19 +27,26 @@ const SelectAmountStep = ({
 
   return (
     <Box>
-      <Input
-        placeholder="Enter amount"
-        value={amount}
-        onChange={handleChangeAmount}
-        type="number"
-        min="0"
-      />
-
-      <Input
-        placeholder="Enter description"
-        value={description}
-        onChange={handleChangeDescription}
-      />
+      <Box>
+        <SharedStyles.InputLabel>Amount</SharedStyles.InputLabel>
+        <Input
+          placeholder="Enter amount"
+          value={amount}
+          onChange={handleChangeAmount}
+          type="number"
+          min="0"
+          mt="12px"
+        />
+      </Box>
+      <Box mt="24px">
+        <SharedStyles.InputLabel>Description</SharedStyles.InputLabel>
+        <Input
+          placeholder="Enter description"
+          value={description}
+          onChange={handleChangeDescription}
+          mt="12px"
+        />
+      </Box>
     </Box>
   );
 };

@@ -3,6 +3,7 @@ import { Tabs } from "~/components/molecules";
 import { ISplit, IUser, SplitType } from "~/types";
 import { SPLIT_TYPES } from "../../constants";
 import useUser from "~/hooks/useUser";
+import styled from "styled-components";
 
 interface IProps {
   splits: ISplit[];
@@ -60,12 +61,12 @@ const SelectSplitStep = ({
             user.id === userDetails.id ? "You" : userDetails.name;
 
           return (
-            <Flex justifyContent="space-between" alignItems="center">
+            <ParticipantsContainer>
               <Text>{userDisplayName}</Text>
               <Text>
                 {split.amount ? `Rs. ${split.amount}` : `${split.percentage} %`}
               </Text>
-            </Flex>
+            </ParticipantsContainer>
           );
         })}
       </Box>
@@ -74,3 +75,12 @@ const SelectSplitStep = ({
 };
 
 export default SelectSplitStep;
+
+const ParticipantsContainer = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+
+  & + & {
+    margin-top: 12px;
+  }
+`;

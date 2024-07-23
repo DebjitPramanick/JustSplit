@@ -1,25 +1,47 @@
 import { Header, PageLoader } from "~/components/molecules";
 import * as Styles from "./index.styled";
 import colors from "~/styles/colors";
-import { useExpenseApi } from "~/api";
+import { expenseApi } from "~/api";
 import { useParams } from "react-router-dom";
 import { Flex } from "~/components/atoms";
 import { IExpense } from "~/types";
 import { formatTime } from "~/utils/date.utils";
 import useUser from "~/hooks/useUser";
+import { useRequestStates } from "~/hooks";
+import { useEffect } from "react";
 
 const FriendExpensesView = () => {
   const { user } = useUser();
   const { friendId } = useParams();
-  const { getFriendExpensesQuery } = useExpenseApi({ friendId });
+  const [fetchFriendExpensesRequestState, fetchFriendExpensesRequestHandlers] =
+    useRequestStates();
+
+  const getFriendExpenses = async () => {
+    if (!friendId) {
+      return;
+    }
+    try {
+      fetchFriendExpensesRequestHandlers.pending();
+      const response = await expenseApi.fetchFriendExpenses(friendId);
+      fetchFriendExpensesRequestHandlers.fulfilled(response);
+    } catch (error) {
+      fetchFriendExpensesRequestHandlers.rejected(error);
+    }
+  };
+
+  useEffect(() => {
+    getFriendExpenses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   let expensesNode;
 
-  if (getFriendExpensesQuery.isLoading) {
+  if (fetchFriendExpensesRequestState.pending) {
     expensesNode = <PageLoader />;
-  } else if (getFriendExpensesQuery.isSuccess) {
+  } else if (fetchFriendExpensesRequestState.fulfilled) {
     expensesNode = (
       <Styles.ExpensesContainer mt="32px">
-        {getFriendExpensesQuery.data.map((expense: IExpense) => {
+        {fetchFriendExpensesRequestState.data.map((expense: IExpense) => {
           const isOwed = expense.paidBy === user?.id;
           return (
             <Styles.Expense>

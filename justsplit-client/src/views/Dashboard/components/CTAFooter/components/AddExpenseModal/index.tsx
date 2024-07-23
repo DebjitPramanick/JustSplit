@@ -14,7 +14,8 @@ import { IExpense, IGroup, ISplit, IUser, SplitType } from "~/types";
 import { useEffect } from "react";
 import useUser from "~/hooks/useUser";
 import { getSplits } from "./utils";
-import { useExpenseApi } from "~/api";
+import { expenseApi } from "~/api";
+import { useRequestStates } from "~/hooks";
 
 interface IProps {
   isOpen: boolean;
@@ -52,8 +53,9 @@ export const AddExpenseModal = ({
   friends,
 }: IProps) => {
   const { user } = useUser();
-  const { addExpenseMutation } = useExpenseApi();
   const [currentState, setCurrentState] = useImmer(initialState);
+  const [addExpenseRequestState, addExpenseRequestHandlers] =
+    useRequestStates();
 
   const handleCloseModal = () => {
     setCurrentState(initialState);
@@ -113,7 +115,7 @@ export const AddExpenseModal = ({
     });
   };
 
-  const handleClickAddBtn = () => {
+  const handleClickAddBtn = async () => {
     const payload: Partial<IExpense> = {
       amount: currentState.amount,
       description: currentState.expenseDescription,
@@ -130,13 +132,19 @@ export const AddExpenseModal = ({
       payload.groupId = currentState.selectedGroup.id;
     }
 
-    addExpenseMutation.mutate({
-      payload,
-    });
-
-    setCurrentState((draft) => {
-      draft.currentStepIndex += 1;
-    });
+    try {
+      addExpenseRequestHandlers.pending();
+      const response = await expenseApi.addExpense({
+        payload,
+      });
+      setCurrentState((draft) => {
+        draft.currentStepIndex += 1;
+      });
+      console.log(response);
+      addExpenseRequestHandlers.fulfilled(response);
+    } catch (error) {
+      addExpenseRequestHandlers.rejected(error);
+    }
   };
 
   useEffect(() => {
@@ -202,6 +210,7 @@ export const AddExpenseModal = ({
       </Flex>
     );
   } else if (currentStep === ADD_EXPENSE_STEPS.SPLIT_AMOUNT_STEP) {
+    const isNextStepBtnDisabled = !currentState.amount;
     stepView = (
       <SelectAmountStep
         amount={currentState.amount}
@@ -213,7 +222,12 @@ export const AddExpenseModal = ({
     actionButtonNodes = (
       <Flex alignItems="center" justifyContent="space-between">
         <Button text="Go Back" outlined onClick={handleClickPrevStepBtn} />
-        <Button text="Next" ml="12px" onClick={handleClickNextStepBtn} />
+        <Button
+          text="Next"
+          ml="12px"
+          onClick={handleClickNextStepBtn}
+          disabled={isNextStepBtnDisabled}
+        />
       </Flex>
     );
   } else if (currentStep === ADD_EXPENSE_STEPS.SELECT_SPLIT_STEP) {
@@ -232,19 +246,24 @@ export const AddExpenseModal = ({
           text="Go Back"
           outlined
           onClick={handleClickPrevStepBtn}
-          disabled={addExpenseMutation.isLoading}
+          disabled={addExpenseRequestState.pending}
         />
         <Button
           text="Add"
           ml="12px"
           onClick={handleClickAddBtn}
-          loading={addExpenseMutation.isLoading}
-          disabled={addExpenseMutation.isLoading}
+          loading={addExpenseRequestState.pending}
+          disabled={addExpenseRequestState.pending}
         />
       </Flex>
     );
   } else {
     stepView = <SplitSuccessStep />;
+    actionButtonNodes = (
+      <Flex alignItems="center" justifyContent="flex-end">
+        <Button text="Dismiss" onClick={handleCloseModal} />
+      </Flex>
+    );
   }
 
   return (

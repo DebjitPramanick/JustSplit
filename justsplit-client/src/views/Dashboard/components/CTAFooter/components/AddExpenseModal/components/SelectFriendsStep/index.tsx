@@ -2,6 +2,8 @@ import Select from "react-select";
 import { Box } from "~/components/atoms";
 import { IGroup, IUser } from "~/types";
 
+import * as SharedStyles from "../index.styled";
+
 interface IProps {
   groups: IGroup[];
   friends: IUser[];
@@ -40,14 +42,17 @@ const SelectFriendsStep = ({
 
   return (
     <Box>
-      <Select
-        value={selectedFriend || selectedGroup}
-        onChange={handleSelect}
-        placeholder="Select friend or group"
-        options={options}
-        getOptionValue={(option) => option}
-        getOptionLabel={(option) => option.name}
-      />
+      <SharedStyles.InputLabel>Select Friend or Group</SharedStyles.InputLabel>
+      <Box mt="12px">
+        <Select
+          value={selectedFriend || selectedGroup}
+          onChange={handleSelect}
+          placeholder="Select friend or group"
+          options={options}
+          getOptionValue={(option) => option}
+          getOptionLabel={(option) => option.name}
+        />
+      </Box>
     </Box>
   );
 };
