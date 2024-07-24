@@ -10,7 +10,7 @@ import * as SharedStyles from "../index.styled";
 interface IProps {
   splits: ISplit[];
   splitType: SplitType;
-  amountPaidBy: IUser;
+  amountPaidBy: IUser | null;
   usersToSplit: IUser[];
   onChangeSplit: ({ split }: { split: ISplit }) => void;
   onChangeSplitType: (splitType: SplitType) => void;

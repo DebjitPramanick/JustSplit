@@ -52,7 +52,7 @@ public class ExpenseService {
 
     public List<ExpenseDTO> getExpensesByUserId(String userId) throws Exception {
         try {
-            List<ExpenseDTO> expenses = expenseRepo.findByPaidByOrParticipantsContaining(userId, userId);
+            List<ExpenseDTO> expenses = expenseRepo.findByPaidByOrParticipantsContaining(userId);
             return expenses;
         } catch (Exception e) {
             throw new Exception("Failed to find expenses.");

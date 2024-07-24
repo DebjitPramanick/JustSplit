@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.debjit.justsplit_server.dto.Expenses.FriendExpensesDTO;
+import com.debjit.justsplit_server.dto.Expenses.ListOfExpensesDTO;
 import com.debjit.justsplit_server.model.ExpenseDTO;
+import com.debjit.justsplit_server.model.GroupDTO;
 import com.debjit.justsplit_server.model.UserDTO;
 import com.debjit.justsplit_server.service.ExpenseService;
+import com.debjit.justsplit_server.service.GroupService;
 import com.debjit.justsplit_server.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +35,9 @@ public class ExpenseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GroupService groupService;
+
     @GetMapping("/expenses/friends/{friendId}")
     public ResponseEntity<?> getExpensesByParticipants(HttpServletRequest request,
             @PathVariable(name = "friendId", required = true) String friendId) {
@@ -40,10 +45,10 @@ public class ExpenseController {
             String loggedInUserId = request.getAttribute("user_id").toString();
             List<ExpenseDTO> expenses = expenseService.getExpensesByBetweenTwoFriends(loggedInUserId, friendId);
             UserDTO friend = userService.getUserById(friendId);
-            FriendExpensesDTO friendExpensesDTO = new FriendExpensesDTO();
-            friendExpensesDTO.setExpenses(expenses);
-            friendExpensesDTO.setFriend(friend);
-            return new ResponseEntity<FriendExpensesDTO>(friendExpensesDTO, HttpStatus.OK);
+            ListOfExpensesDTO listOfExpensesDTO = new ListOfExpensesDTO();
+            listOfExpensesDTO.setExpenses(expenses);
+            listOfExpensesDTO.setFriend(friend);
+            return new ResponseEntity<ListOfExpensesDTO>(listOfExpensesDTO, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -53,7 +58,11 @@ public class ExpenseController {
     public ResponseEntity<?> getExpensesByGroup(@PathVariable(name = "groupId", required = true) String groupId) {
         try {
             List<ExpenseDTO> expenses = expenseService.getExpensesByGroupId(groupId);
-            return new ResponseEntity<List<ExpenseDTO>>(expenses, HttpStatus.OK);
+            GroupDTO group = groupService.getGroupById(groupId);
+            ListOfExpensesDTO listOfExpensesDTO = new ListOfExpensesDTO();
+            listOfExpensesDTO.setExpenses(expenses);
+            listOfExpensesDTO.setGroup(group);
+            return new ResponseEntity<ListOfExpensesDTO>(listOfExpensesDTO, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

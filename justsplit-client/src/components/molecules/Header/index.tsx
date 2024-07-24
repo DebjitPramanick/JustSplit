@@ -1,21 +1,21 @@
 import colors from "~/styles/colors";
 import * as Styles from "./index.styled";
 import { Button } from "~/components/atoms";
-import { useUserApi } from "~/api";
+import { userApi } from "~/api";
+import { useRequestStates } from "~/hooks";
 
 const Header = () => {
-  const { logoutUserMutation } = useUserApi();
+  const [logoutUserRequestState, logoutUserRequestHandlers] =
+    useRequestStates();
 
-  const handleLogoutBtnClick = () => {
-    logoutUserMutation.mutate(
-      {},
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          window.location.href = "/login";
-        },
-      }
-    );
+  const handleLogoutBtnClick = async () => {
+    logoutUserRequestHandlers.pending();
+    try {
+      const response = await userApi.logoutUser({});
+      logoutUserRequestHandlers.fulfilled(response);
+    } catch (error) {
+      logoutUserRequestHandlers.rejected(error);
+    }
   };
 
   return (
@@ -30,8 +30,8 @@ const Header = () => {
             size="medium"
             outlined
             onClick={handleLogoutBtnClick}
-            loading={logoutUserMutation.isLoading}
-            disabled={logoutUserMutation.isLoading}
+            loading={logoutUserRequestState.pending}
+            disabled={logoutUserRequestState.pending}
           />
         </Styles.Container>
       </Styles.HeaderRoot>

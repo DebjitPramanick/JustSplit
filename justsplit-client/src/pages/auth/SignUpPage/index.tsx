@@ -17,7 +17,8 @@ import React, { useEffect } from "react";
 import { useImmer } from "use-immer";
 import colors from "~/styles/colors";
 import { useNavigate } from "react-router-dom";
-import { useUserApi } from "~/api";
+import { userApi } from "~/api";
+import { useRequestStates } from "~/hooks";
 
 type FieldType = "name" | "email" | "password" | "confirmedPassword";
 
@@ -40,7 +41,6 @@ const RIGHT_SIDE_CONTENT_NODES = [
 ];
 
 const SignUpPage = () => {
-  const { signupUserMutation } = useUserApi();
   const navigate = useNavigate();
   const [pageState, setPageState] = useImmer({
     name: "",
@@ -50,6 +50,8 @@ const SignUpPage = () => {
     currentRightSideNodeIdx: 0,
     errorMsg: "",
   });
+  const [singUpUserRequestState, signUpUserRequestHandlers] =
+    useRequestStates();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const field: FieldType = e.target.name as FieldType;
@@ -59,7 +61,7 @@ const SignUpPage = () => {
     });
   };
 
-  const handleFormSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (pageState.confirmedPassword !== pageState.password) {
       setPageState((draft) => {
@@ -72,21 +74,20 @@ const SignUpPage = () => {
       email: pageState.email,
       password: pageState.password,
     };
-    signupUserMutation.mutate(
-      {
+
+    signUpUserRequestHandlers.pending();
+    try {
+      const response = await userApi.signupUser({
         payload,
-      },
-      {
-        onSuccess: () => {
-          navigate("/");
-        },
-        onError: (error) => {
-          setPageState((draft) => {
-            draft.errorMsg = (error as Error).message;
-          });
-        },
-      }
-    );
+      });
+      signUpUserRequestHandlers.fulfilled(response);
+      navigate("/");
+    } catch (error) {
+      signUpUserRequestHandlers.rejected(error);
+      setPageState((draft) => {
+        draft.errorMsg = (error as Error).message;
+      });
+    }
   };
 
   let errorMsgNode;
@@ -174,8 +175,8 @@ const SignUpPage = () => {
                 text="Signup"
                 type="submit"
                 ml="16px"
-                loading={signupUserMutation.isLoading}
-                disabled={signupUserMutation.isLoading}
+                loading={singUpUserRequestState.pending}
+                disabled={singUpUserRequestState.pending}
               />
             </Flex>
           </AuthForm>

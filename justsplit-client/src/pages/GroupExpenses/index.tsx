@@ -1,7 +1,7 @@
-import React from "react";
+import GroupExpensesView from "~/views/GroupExpensesView";
 
 const GroupExpensesPage = () => {
-  return <div>GroupExpenses</div>;
+  return <GroupExpensesView />;
 };
 
 export default GroupExpensesPage;

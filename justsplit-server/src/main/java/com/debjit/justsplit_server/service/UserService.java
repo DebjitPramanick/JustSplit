@@ -1,8 +1,13 @@
 package com.debjit.justsplit_server.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,11 +56,13 @@ public class UserService {
         try {
 
             List<ExpenseDTO> expenses = expenseService.getExpensesByUserId(userId);
-            List<String> friendIds = new ArrayList<>();
+            Set<String> friendIds = new HashSet<>();
             for (ExpenseDTO expenseDTO : expenses) {
-                friendIds.add(expenseDTO.getParticipants().get(0));
+                friendIds.addAll(expenseDTO.getParticipants());
+                friendIds.add(expenseDTO.getPaidBy());
             }
-            return userRepo.findByIdIn(friendIds);
+            friendIds.removeIf(friendId -> friendId.equals(userId));
+            return userRepo.findByIdIn(new ArrayList<>(friendIds));
         } catch (Exception e) {
             return new ArrayList<>();
         }

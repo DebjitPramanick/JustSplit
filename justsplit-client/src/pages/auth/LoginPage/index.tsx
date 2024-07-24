@@ -19,7 +19,8 @@ import { useImmer } from "use-immer";
 import colors from "~/styles/colors";
 import { useNavigate } from "react-router-dom";
 import useUser from "~/hooks/useUser";
-import { useUserApi } from "~/api";
+import { userApi } from "~/api";
+import { useRequestStates } from "~/hooks";
 
 type FieldType = "email" | "password";
 
@@ -44,13 +45,14 @@ const RIGHT_SIDE_CONTENT_NODES = [
 const LoginPage = () => {
   const navigate = useNavigate();
   const { user } = useUser();
-  const { loginUserMutation } = useUserApi();
+
   const [pageState, setPageState] = useImmer({
     email: "",
     password: "",
     currentRightSideNodeIdx: 0,
     errorMsg: "",
   });
+  const [logInUserRequestState, logInUserRequestHandlers] = useRequestStates();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const field: FieldType = e.target.name as FieldType;
@@ -60,27 +62,26 @@ const LoginPage = () => {
     });
   };
 
-  const handleFormSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     const payload = {
       email: pageState.email,
       password: pageState.password,
     };
-    loginUserMutation.mutate(
-      {
+
+    logInUserRequestHandlers.pending();
+    try {
+      const response = await userApi.loginUser({
         payload,
-      },
-      {
-        onSuccess: () => {
-          navigate("/");
-        },
-        onError: (error) => {
-          setPageState((draft) => {
-            draft.errorMsg = (error as Error).message;
-          });
-        },
-      }
-    );
+      });
+      logInUserRequestHandlers.fulfilled(response);
+      navigate("/");
+    } catch (error) {
+      logInUserRequestHandlers.rejected(error);
+      setPageState((draft) => {
+        draft.errorMsg = (error as Error).message;
+      });
+    }
   };
 
   let errorMsgNode;
@@ -153,8 +154,8 @@ const LoginPage = () => {
                 text="Log In"
                 type="submit"
                 ml="16px"
-                loading={loginUserMutation.isLoading}
-                disabled={loginUserMutation.isLoading}
+                loading={logInUserRequestState.pending}
+                disabled={logInUserRequestState.pending}
               />
             </Flex>
           </AuthForm>

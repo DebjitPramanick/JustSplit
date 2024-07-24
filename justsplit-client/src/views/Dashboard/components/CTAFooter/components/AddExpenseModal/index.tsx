@@ -14,7 +14,7 @@ import { IExpense, IGroup, ISplit, IUser, SplitType } from "~/types";
 import { useEffect } from "react";
 import useUser from "~/hooks/useUser";
 import { getSplits } from "./utils";
-import { expenseApi } from "~/api";
+import { expenseApi, userApi } from "~/api";
 import { useRequestStates } from "~/hooks";
 
 interface IProps {
@@ -56,10 +56,27 @@ export const AddExpenseModal = ({
   const [currentState, setCurrentState] = useImmer(initialState);
   const [addExpenseRequestState, addExpenseRequestHandlers] =
     useRequestStates();
+  const [fetchUsersOfGroupRequestState, fetchUsersOfGroupRequestHandlers] =
+    useRequestStates();
 
   const handleCloseModal = () => {
     setCurrentState(initialState);
     onCloseModal();
+  };
+
+  const getUsersOfSelectedGroup = async () => {
+    fetchUsersOfGroupRequestHandlers.pending();
+    try {
+      const response = await userApi.fetchUsersByGroupId(
+        currentState.selectedGroup!.id
+      );
+      setCurrentState((draft) => {
+        draft.usersToSplitExpense = response;
+      });
+      fetchUsersOfGroupRequestHandlers.fulfilled(response);
+    } catch (error) {
+      fetchUsersOfGroupRequestHandlers.rejected(error);
+    }
   };
 
   const handleClickNextStepBtn = () => {
@@ -83,6 +100,7 @@ export const AddExpenseModal = ({
   const handleSelectFriend = ({ friend }: { friend: IUser }) => {
     setCurrentState((draft) => {
       draft.selectedFriend = friend;
+      draft.usersToSplitExpense = [user, friend];
     });
   };
 
@@ -161,26 +179,26 @@ export const AddExpenseModal = ({
   }, []);
 
   useEffect(() => {
-    if (currentState.selectedFriend) {
-      const usersToSplitTheExpense = [user, currentState.selectedFriend];
+    if (currentState.selectedGroup) {
+      getUsersOfSelectedGroup();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentState.selectedGroup]);
 
+  useEffect(() => {
+    if (currentState.selectedGroup || currentState.selectedFriend) {
       const splits = getSplits({
         amount: currentState.amount,
         splitType: currentState.splitType,
-        users: usersToSplitTheExpense,
+        users: currentState.usersToSplitExpense,
       });
 
       setCurrentState((draft) => {
         draft.expenseSplits = splits;
-        draft.usersToSplitExpense = usersToSplitTheExpense;
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    currentState.amount,
-    currentState.selectedFriend,
-    currentState.selectedGroup,
-  ]);
+  }, [currentState.amount]);
 
   const currentStep = ADD_EXPENSE_STEPS_SEQUENCE[currentState.currentStepIndex];
 

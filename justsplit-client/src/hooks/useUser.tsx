@@ -1,12 +1,13 @@
 import { useContext, createContext, useEffect } from "react";
-import { useUserApi } from "~/api";
+import { userApi } from "~/api";
 
 import { IUser } from "~/types";
+import useRequestStates from "./useRequestStates";
 
 interface IUserContextProps {
   user: IUser;
   isPending: boolean;
-  isError: boolean;
+  isRejected: boolean;
   error: unknown | null;
 }
 
@@ -23,7 +24,7 @@ const initialUser = {
 const UserContext = createContext<IUserContextProps>({
   user: initialUser,
   isPending: false,
-  isError: false,
+  isRejected: false,
   error: null,
 });
 
@@ -32,25 +33,41 @@ const BlackListedRoutesForLoggedInUser = ["/login", "/signup"];
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { getLoggedInUserQuery } = useUserApi();
-
-  console.log("RE_RENDERING");
+  const [getLoggedInUserRequestState, getLoggedInUserRequestHandlers] =
+    useRequestStates();
 
   const isAuthPages = BlackListedRoutesForLoggedInUser.includes(
     window.location.pathname
   );
 
+  const getLoggedInUser = async () => {
+    getLoggedInUserRequestHandlers.pending();
+    try {
+      const response = await userApi.fetchUser();
+      getLoggedInUserRequestHandlers.fulfilled(response);
+    } catch (error) {
+      getLoggedInUserRequestHandlers.rejected(error);
+    }
+  };
+
+  console.log("RE_RENDERING");
+
   useEffect(() => {
-    if (getLoggedInUserQuery.isSuccess && isAuthPages) {
+    getLoggedInUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (getLoggedInUserRequestState.isSuccess && isAuthPages) {
       window.location.href = "/";
     }
-  }, [getLoggedInUserQuery.isSuccess, isAuthPages]);
+  }, [getLoggedInUserRequestState.isSuccess, isAuthPages]);
 
   const values = {
-    user: getLoggedInUserQuery.data,
-    isPending: getLoggedInUserQuery.isLoading,
-    isError: getLoggedInUserQuery.isError,
-    error: getLoggedInUserQuery.error,
+    user: getLoggedInUserRequestState.data,
+    isPending: getLoggedInUserRequestState.pending,
+    isRejected: getLoggedInUserRequestState.rejected,
+    error: getLoggedInUserRequestState.rejected.error,
   };
 
   return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
