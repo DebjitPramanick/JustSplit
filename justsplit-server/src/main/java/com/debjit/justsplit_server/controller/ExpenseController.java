@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.debjit.justsplit_server.dto.Expenses.FriendExpensesDTO;
 import com.debjit.justsplit_server.model.ExpenseDTO;
+import com.debjit.justsplit_server.model.UserDTO;
 import com.debjit.justsplit_server.service.ExpenseService;
+import com.debjit.justsplit_server.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,13 +30,20 @@ public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/expenses/friends/{friendId}")
     public ResponseEntity<?> getExpensesByParticipants(HttpServletRequest request,
             @PathVariable(name = "friendId", required = true) String friendId) {
         try {
             String loggedInUserId = request.getAttribute("user_id").toString();
-            List<ExpenseDTO> expenses = expenseService.getExpensesByParticipants(loggedInUserId, friendId);
-            return new ResponseEntity<List<ExpenseDTO>>(expenses, HttpStatus.OK);
+            List<ExpenseDTO> expenses = expenseService.getExpensesByBetweenTwoFriends(loggedInUserId, friendId);
+            UserDTO friend = userService.getUserById(friendId);
+            FriendExpensesDTO friendExpensesDTO = new FriendExpensesDTO();
+            friendExpensesDTO.setExpenses(expenses);
+            friendExpensesDTO.setFriend(friend);
+            return new ResponseEntity<FriendExpensesDTO>(friendExpensesDTO, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

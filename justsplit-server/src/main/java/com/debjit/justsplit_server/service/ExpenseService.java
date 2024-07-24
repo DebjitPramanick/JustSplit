@@ -1,5 +1,6 @@
 package com.debjit.justsplit_server.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +30,20 @@ public class ExpenseService {
         }
     }
 
-    public List<ExpenseDTO> getExpensesByParticipants(String paidBy, String participantId) throws Exception {
+    public List<ExpenseDTO> getExpensesByBetweenTwoFriends(String firstParticipantId, String secondParticipantId)
+            throws Exception {
         try {
-            List<ExpenseDTO> expenses = expenseRepo.findByPaidByAndParticipantsContaining(paidBy, participantId);
+            List<ExpenseDTO> expensesPaidByFirstParticipant = expenseRepo.findByPaidByAndParticipantsIsContaining(
+                    firstParticipantId,
+                    secondParticipantId);
+            List<ExpenseDTO> expensesPaidBySecondParticipant = expenseRepo.findByPaidByAndParticipantsIsContaining(
+                    secondParticipantId,
+                    firstParticipantId);
+
+            List<ExpenseDTO> expenses = new ArrayList<>();
+            expenses.addAll(expensesPaidByFirstParticipant);
+            expenses.addAll(expensesPaidBySecondParticipant);
+            expenses.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
             return expenses;
         } catch (Exception e) {
             throw new Exception("Failed to find expenses.");

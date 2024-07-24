@@ -4,21 +4,27 @@ import { ISplit, IUser, SplitType } from "~/types";
 import { SPLIT_TYPES } from "../../constants";
 import useUser from "~/hooks/useUser";
 import styled from "styled-components";
+import Select from "react-select";
+import * as SharedStyles from "../index.styled";
 
 interface IProps {
   splits: ISplit[];
   splitType: SplitType;
+  amountPaidBy: IUser;
   usersToSplit: IUser[];
   onChangeSplit: ({ split }: { split: ISplit }) => void;
   onChangeSplitType: (splitType: SplitType) => void;
+  onChangeAmountPaidBy: (paidBy: IUser) => void;
 }
 
 const SelectSplitStep = ({
   splits,
   splitType,
+  amountPaidBy,
   usersToSplit,
   onChangeSplit,
   onChangeSplitType,
+  onChangeAmountPaidBy,
 }: IProps) => {
   const { user } = useUser();
 
@@ -69,6 +75,19 @@ const SelectSplitStep = ({
             </ParticipantsContainer>
           );
         })}
+      </Box>
+      <Box mt="12px">
+        <SharedStyles.InputLabel>Paid By</SharedStyles.InputLabel>
+        <Box mt="12px">
+          <Select
+            value={amountPaidBy}
+            onChange={onChangeAmountPaidBy}
+            placeholder="Paid by"
+            options={usersToSplit}
+            getOptionValue={(option) => option}
+            getOptionLabel={(option) => option.name}
+          />
+        </Box>
       </Box>
     </Box>
   );

@@ -10,8 +10,8 @@ import com.debjit.justsplit_server.model.ExpenseDTO;
 
 @Repository
 public interface ExpenseRepository extends MongoRepository<ExpenseDTO, String> {
-    @Query(value = "{ 'groupId' : null }")
-    List<ExpenseDTO> findByPaidByAndParticipantsContaining(String paidBy, String participant);
+    @Query(value = "{ 'groupId' : null, paidBy: ?0, participants: ?1 }")
+    List<ExpenseDTO> findByPaidByAndParticipantsIsContaining(String paidBy, String participantId);
 
     @Query(value = "{ 'groupId' : null }")
     List<ExpenseDTO> findByPaidByOrParticipantsContaining(String paidBy, String participant);

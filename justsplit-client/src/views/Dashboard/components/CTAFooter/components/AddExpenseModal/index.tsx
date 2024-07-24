@@ -115,6 +115,12 @@ export const AddExpenseModal = ({
     });
   };
 
+  const handleChangeAmountPaidBy = (paidBy: IUser) => {
+    setCurrentState((draft) => {
+      draft.amountPaidBy = paidBy;
+    });
+  };
+
   const handleClickAddBtn = async () => {
     const payload: Partial<IExpense> = {
       amount: currentState.amount,
@@ -124,9 +130,9 @@ export const AddExpenseModal = ({
       paidBy: currentState.amountPaidBy?.id,
     };
 
-    payload.participants = currentState.usersToSplitExpense
-      .filter((_user) => _user.id !== user.id)
-      .map((_user) => _user.id);
+    payload.participants = currentState.usersToSplitExpense.map(
+      (_user) => _user.id
+    );
 
     if (currentState.selectedGroup) {
       payload.groupId = currentState.selectedGroup.id;
@@ -235,9 +241,11 @@ export const AddExpenseModal = ({
       <SelectSplitStep
         splitType={currentState.splitType}
         splits={currentState.expenseSplits}
+        amountPaidBy={currentState.amountPaidBy}
         usersToSplit={currentState.usersToSplitExpense}
         onChangeSplit={handleChangeSplit}
         onChangeSplitType={handleChangeSplitType}
+        onChangeAmountPaidBy={handleChangeAmountPaidBy}
       />
     );
     actionButtonNodes = (

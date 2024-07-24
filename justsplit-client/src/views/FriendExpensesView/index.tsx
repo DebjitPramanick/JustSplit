@@ -35,16 +35,22 @@ const FriendExpensesView = () => {
   }, []);
 
   let expensesNode;
+  let headerNode;
 
   if (fetchFriendExpensesRequestState.pending) {
     expensesNode = <PageLoader />;
   } else if (fetchFriendExpensesRequestState.fulfilled) {
+    const { expenses = [], friend } = fetchFriendExpensesRequestState.data;
     expensesNode = (
       <Styles.ExpensesContainer mt="32px">
-        {fetchFriendExpensesRequestState.data.map((expense: IExpense) => {
+        {expenses.map((expense: IExpense) => {
           const isOwed = expense.paidBy === user?.id;
+          const currentUserSplit = expense.splits.find(
+            (split) => split.userId === user?.id
+          );
+
           return (
-            <Styles.Expense>
+            <Styles.Expense key={expense.id}>
               <Flex>
                 <Styles.ExpenseDate>
                   {formatTime(expense.createdAt, "Do MMMM, YYYY")}
@@ -59,12 +65,24 @@ const FriendExpensesView = () => {
                 }
               >
                 {isOwed ? "+" : "-"}
-                {expense.amount}
+                {currentUserSplit?.amount}
               </Styles.ExpenseAmount>
             </Styles.Expense>
           );
         })}
       </Styles.ExpensesContainer>
+    );
+
+    headerNode = (
+      <Styles.StickyHeader>
+        <Styles.FriendNameTitle>{friend.name}</Styles.FriendNameTitle>
+        <Styles.BalanceText mt="12px">
+          You own {friend.name}{" "}
+          <span style={{ color: colors.TEXT_POSITIVE_WEAK, fontWeight: 600 }}>
+            Rs. 400
+          </span>
+        </Styles.BalanceText>
+      </Styles.StickyHeader>
     );
   }
 
@@ -73,17 +91,7 @@ const FriendExpensesView = () => {
       <Header />
       <Styles.Root>
         <Styles.Container>
-          <Styles.StickyHeader>
-            <Styles.FriendNameTitle>Debjit Pramanick</Styles.FriendNameTitle>
-            <Styles.BalanceText mt="12px">
-              You own Debjit{" "}
-              <span
-                style={{ color: colors.TEXT_POSITIVE_WEAK, fontWeight: 600 }}
-              >
-                Rs. 400
-              </span>
-            </Styles.BalanceText>
-          </Styles.StickyHeader>
+          {headerNode}
           {expensesNode}
         </Styles.Container>
         {/* <CTAFooter /> */}
