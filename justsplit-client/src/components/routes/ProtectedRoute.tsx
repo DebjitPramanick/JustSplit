@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useUser from "~/hooks/useUser";
+import useApp from "~/hooks/useApp";
 import { PageLoader } from "../molecules";
 
 const ProtectedRoute = ({ redirectPath = "/login" }) => {
-  const { user, isPending } = useUser();
+  const { user, isLoadingUser } = useApp();
 
-  if (isPending) {
+  if (isLoadingUser) {
     return <PageLoader />;
   }
 

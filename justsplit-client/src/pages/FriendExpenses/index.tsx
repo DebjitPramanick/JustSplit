@@ -1,4 +1,4 @@
-import FriendExpensesView from "~/views/FriendExpensesView";
+import FriendExpensesView from "~/views/ExpensesView/FriendExpensesView";
 
 const FriendExpensesPage = () => {
   return <FriendExpensesView />;

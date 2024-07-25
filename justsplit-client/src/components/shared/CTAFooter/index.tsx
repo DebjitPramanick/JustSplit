@@ -5,11 +5,11 @@ import { AddExpenseModal } from "./components/AddExpenseModal";
 import { IGroup, IUser } from "~/types";
 
 interface IProps {
-  groups: IGroup[];
-  friends: IUser[];
+  currentFriend?: IUser;
+  currentGroup?: IGroup;
 }
 
-const CTAFooter = ({ groups, friends }: IProps) => {
+const CTAFooter = ({ currentFriend, currentGroup }: IProps) => {
   const [actionStates, setActionStates] = useImmer({
     isAddExpenseModalOpen: false,
   });
@@ -30,19 +30,21 @@ const CTAFooter = ({ groups, friends }: IProps) => {
     <>
       <Styles.Root>
         <Styles.Container>
-          <Button
-            text="Split Expense"
-            display="block"
-            ml="auto"
-            onClick={handleOpenAddExpenseModal}
-          />
+          <Styles.ActionButtonsContainer>
+            <Button text="Add Expense" onClick={handleOpenAddExpenseModal} />
+            <Button
+              text="Settle Up"
+              ml="12px"
+              onClick={handleOpenAddExpenseModal}
+            />
+          </Styles.ActionButtonsContainer>
         </Styles.Container>
       </Styles.Root>
       <AddExpenseModal
         isOpen={actionStates.isAddExpenseModalOpen}
         onCloseModal={handleCloseAddExpenseModal}
-        groups={groups}
-        friends={friends}
+        currentFriend={currentFriend}
+        currentGroup={currentGroup}
       />
     </>
   );

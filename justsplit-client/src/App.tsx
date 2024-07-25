@@ -3,7 +3,7 @@ import SignUpPage from "~/pages/Auth/SignUpPage";
 import LoginPage from "./pages/Auth/LoginPage";
 import DashboardPage from "./pages/Dashboard";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
-import { UserProvider } from "./hooks/useUser";
+import { AppProvider } from "./hooks/useApp";
 import GroupExpensesPage from "./pages/GroupExpenses";
 import FriendExpensesPage from "./pages/FriendExpenses";
 
@@ -14,7 +14,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Routes>
-      <UserProvider>
+      <AppProvider>
         <Routes>
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/" element={<DashboardPage />} />
@@ -30,7 +30,7 @@ function App() {
             />
           </Route>
         </Routes>
-      </UserProvider>
+      </AppProvider>
     </Router>
   );
 }

@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "~/components/atoms";
 import { Tabs } from "~/components/molecules";
 import { ISplit, IUser, SplitType } from "~/types";
 import { SPLIT_TYPES } from "../../constants";
-import useUser from "~/hooks/useUser";
+import useApp from "~/hooks/useApp";
 import styled from "styled-components";
 import Select from "react-select";
 import * as SharedStyles from "../index.styled";
@@ -26,7 +26,7 @@ const SelectSplitStep = ({
   onChangeSplitType,
   onChangeAmountPaidBy,
 }: IProps) => {
-  const { user } = useUser();
+  const { user } = useApp();
 
   const handleChangeSplitType = (selectedSplitType: SplitType) => {
     onChangeSplitType(selectedSplitType);

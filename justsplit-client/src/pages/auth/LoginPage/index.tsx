@@ -18,7 +18,7 @@ import { useImmer } from "use-immer";
 
 import colors from "~/styles/colors";
 import { useNavigate } from "react-router-dom";
-import useUser from "~/hooks/useUser";
+import useApp from "~/hooks/useApp";
 import { userApi } from "~/api";
 import { useRequestStates } from "~/hooks";
 
@@ -44,7 +44,7 @@ const RIGHT_SIDE_CONTENT_NODES = [
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { user } = useApp();
 
   const [pageState, setPageState] = useImmer({
     email: "",

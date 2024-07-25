@@ -8,6 +8,7 @@ export const Root = styled(UnstyledButton)<{
 }>`
   display: flex;
   align-items: center;
+  justify-content: center;
   height: ${({ height }) => `${height}px`};
   width: auto;
   text-align: center;

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Box, Flex, Text } from "~/components/atoms";
 import { PageContainer } from "~/components/layout";
 import colors from "~/styles/colors";
-import { mediaQueryMobile, mediaQueryMobileOrTablet } from "~/styles/mixins";
+import { mediaQueryMobile } from "~/styles/mixins";
 
 export const Root = styled(Box)``;
 
@@ -12,18 +12,22 @@ export const Container = styled(PageContainer)`
   z-index: 1;
 `;
 
-export const StickyHeader = styled(Box)`
-  position: sticky;
-  top: 56px;
-  background-color: ${colors.BG_NEUTRAL_WEAKEST};
-
-  ${mediaQueryMobileOrTablet} {
-    top: 48px;
-  }
+export const PageTitleContainer = styled(Box)`
+  background-color: ${colors.BG_SURFACE};
+  padding: 16px;
+  border-radius: 8px;
 `;
 
-export const FriendNameTitle = styled(Text)`
-  font-size: 32px;
+export const LeftSection = styled(Box)``;
+
+export const RightSection = styled(Box)`
+  max-width: 368px;
+  width: 100%;
+  margin-left: 16px;
+`;
+
+export const PageTitle = styled(Text)`
+  font-size: 28px;
   color: ${colors.TEXT_NEUTRAL_NORMAL};
   font-weight: 600;
 
@@ -41,13 +45,22 @@ export const BalanceText = styled(Text)`
   }
 `;
 
-export const ExpensesContainer = styled(Box).attrs({ as: "ul" })``;
+export const ExpensesContainer = styled(Box).attrs({ as: "ul" })`
+  background-color: ${colors.BG_SURFACE};
+  padding: 16px;
+  border-radius: 8px;
+`;
 
 export const Expense = styled(Flex).attrs({ as: "li" })`
   justify-content: space-between;
   align-items: center;
-  padding: 16px 12px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:nth-child(odd) {
+    background-color: ${colors.BG_NEUTRAL_WEAKEST};
+  }
 
   &:hover {
     background-color: ${colors.BG_NEUTRAL_WEAK};
@@ -57,13 +70,16 @@ export const Expense = styled(Flex).attrs({ as: "li" })`
 
 export const ExpenseDate = styled(Text)`
   color: ${colors.TEXT_NEUTRAL_WEAK};
+  text-align: center;
 `;
 
 export const ExpenseDescription = styled(Text)``;
 
-export const ExpenseAmount = styled(Text)`
-  font-size: 20px;
-  font-weight: 600;
+export const ExpensePaidBy = styled(Text)`
+  font-size: 14px;
+  color: ${colors.TEXT_NEUTRAL_WEAK};
 `;
 
-export const ExpensePaidBy = styled(Text)``;
+export const ExpenseAmount = styled(Text)`
+  font-size: 18px;
+`;

@@ -1,4 +1,4 @@
-import GroupExpensesView from "~/views/GroupExpensesView";
+import GroupExpensesView from "~/views/ExpensesView/GroupExpensesView";
 
 const GroupExpensesPage = () => {
   return <GroupExpensesView />;

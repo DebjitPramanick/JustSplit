@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-import { Box } from "~/components/atoms";
+import { Box, Flex } from "~/components/atoms";
 import { PageContainer } from "~/components/layout";
 import colors from "~/styles/colors";
 
-import { mediaQueryMobileOrTablet } from "~/styles/mixins";
+import { mediaQueryMobile, mediaQueryMobileOrTablet } from "~/styles/mixins";
 
 export const Root = styled(Box)`
   background-color: ${colors.BG_SURFACE};
@@ -28,5 +28,18 @@ export const Container = styled(PageContainer)`
     align-items: flex-start;
     padding-top: 8px;
     padding-bottom: 8px;
+  }
+`;
+
+export const ActionButtonsContainer = styled(Flex)`
+  width: 100%;
+  justify-content: end;
+
+  ${mediaQueryMobile} {
+    justify-content: center;
+
+    button {
+      flex: 1;
+    }
   }
 `;

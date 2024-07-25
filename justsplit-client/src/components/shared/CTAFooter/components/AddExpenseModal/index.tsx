@@ -12,16 +12,16 @@ import SelectSplitStep from "./components/SelectSplitStep";
 import SplitSuccessStep from "./components/SplitSuccessStep";
 import { IExpense, IGroup, ISplit, IUser, SplitType } from "~/types";
 import { useEffect } from "react";
-import useUser from "~/hooks/useUser";
+import useApp from "~/hooks/useApp";
 import { getSplits } from "./utils";
 import { expenseApi, userApi } from "~/api";
 import { useRequestStates } from "~/hooks";
 
 interface IProps {
   isOpen: boolean;
-  groups: IGroup[];
-  friends: IUser[];
   onCloseModal: () => void;
+  currentFriend?: IUser;
+  currentGroup?: IGroup;
 }
 
 const initialState: {
@@ -49,10 +49,10 @@ const initialState: {
 export const AddExpenseModal = ({
   isOpen,
   onCloseModal,
-  groups,
-  friends,
+  currentFriend,
+  currentGroup,
 }: IProps) => {
-  const { user } = useUser();
+  const { user, friends, groups } = useApp();
   const [currentState, setCurrentState] = useImmer(initialState);
   const [addExpenseRequestState, addExpenseRequestHandlers] =
     useRequestStates();
@@ -164,12 +164,27 @@ export const AddExpenseModal = ({
       setCurrentState((draft) => {
         draft.currentStepIndex += 1;
       });
-      console.log(response);
       addExpenseRequestHandlers.fulfilled(response);
     } catch (error) {
       addExpenseRequestHandlers.rejected(error);
     }
   };
+
+  useEffect(() => {
+    if (currentFriend || currentGroup) {
+      setCurrentState((draft) => {
+        const skipFirstStep = !!currentFriend || !!currentGroup;
+        if (currentFriend) {
+          draft.selectedFriend = currentFriend;
+          draft.usersToSplitExpense = [user, currentFriend];
+        } else if (currentGroup) {
+          draft.selectedGroup = currentGroup;
+        }
+        draft.currentStepIndex = skipFirstStep ? 1 : 0;
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFriend, currentGroup]);
 
   useEffect(() => {
     setCurrentState((draft) => {
@@ -235,6 +250,8 @@ export const AddExpenseModal = ({
     );
   } else if (currentStep === ADD_EXPENSE_STEPS.SPLIT_AMOUNT_STEP) {
     const isNextStepBtnDisabled = !currentState.amount;
+    const isPrevStepBtnDisabled = !!currentFriend || !!currentGroup;
+
     stepView = (
       <SelectAmountStep
         amount={currentState.amount}
@@ -245,7 +262,12 @@ export const AddExpenseModal = ({
     );
     actionButtonNodes = (
       <Flex alignItems="center" justifyContent="space-between">
-        <Button text="Go Back" outlined onClick={handleClickPrevStepBtn} />
+        <Button
+          text="Go Back"
+          outlined
+          onClick={handleClickPrevStepBtn}
+          disabled={isPrevStepBtnDisabled}
+        />
         <Button
           text="Next"
           ml="12px"

@@ -1,25 +1,54 @@
-import { useFriendApi, useGroupApi } from "~/api";
+import { friendApi, groupApi } from "~/api";
 import { Header } from "~/components/molecules";
-import useUser from "~/hooks/useUser";
+import useApp from "~/hooks/useApp";
 import { IGroup, IUser } from "~/types";
 import * as Styles from "./index.styled";
 import DashboardCard from "./components/DashboardCard";
-import CTAFooter from "./components/CTAFooter";
+import CTAFooter from "~/components/shared/CTAFooter";
+import { useRequestStates } from "~/hooks";
+import { useEffect } from "react";
 
 const DashboardView = () => {
-  const { user } = useUser();
-  const { getUserFriendsQuery } = useFriendApi();
-  const { getUserGroupsQuery, createGroupMutation } = useGroupApi({
-    userId: user?.id || "",
-  });
+  const { user } = useApp();
+
+  const [fetchUserFriendsRequestState, fetchUserFriendsRequestHandlers] =
+    useRequestStates();
+  const [fetchUserGroupsRequestState, fetchUserGroupsRequestHandlers] =
+    useRequestStates();
+
+  const getUserFriends = async () => {
+    fetchUserFriendsRequestHandlers.pending();
+    try {
+      const response = await friendApi.fetchUserFriends();
+      fetchUserFriendsRequestHandlers.fulfilled(response);
+    } catch (error) {
+      fetchUserFriendsRequestHandlers.rejected(error);
+    }
+  };
+
+  const getUserGroups = async () => {
+    fetchUserGroupsRequestHandlers.pending();
+    try {
+      const response = await groupApi.fetchUserGroups(user.id);
+      fetchUserGroupsRequestHandlers.fulfilled(response);
+    } catch (error) {
+      fetchUserGroupsRequestHandlers.rejected(error);
+    }
+  };
 
   const handleAddExpense = () => {};
+
+  useEffect(() => {
+    getUserFriends();
+    getUserGroups();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let friendsNode;
   let groupsNode;
 
-  if (getUserFriendsQuery.isSuccess) {
-    const userFriends = getUserFriendsQuery.data;
+  if (fetchUserFriendsRequestState.fulfilled) {
+    const userFriends = fetchUserFriendsRequestState.data;
     friendsNode = (
       <DashboardCard title="Friends">
         {userFriends.map((friend: IUser) => (
@@ -32,8 +61,8 @@ const DashboardView = () => {
     );
   }
 
-  if (getUserGroupsQuery.isSuccess) {
-    const userGroups = getUserGroupsQuery.data;
+  if (fetchUserGroupsRequestState.fulfilled) {
+    const userGroups = fetchUserGroupsRequestState.data;
     groupsNode = (
       <DashboardCard title="Groups">
         {userGroups.map((group: IGroup) => (
@@ -62,8 +91,8 @@ const DashboardView = () => {
           </Styles.CardsContainer>
         </Styles.Container>
         <CTAFooter
-          friends={getUserFriendsQuery.data}
-          groups={getUserGroupsQuery.data}
+          friends={fetchUserFriendsRequestState.data}
+          groups={fetchUserGroupsRequestState.data}
         />
       </Styles.Root>
     </>
